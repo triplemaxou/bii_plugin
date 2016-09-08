@@ -1,0 +1,42 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 18 mai 2016, 10:37:22
+    Author     : t.poisson
+*/
+
+.bii-flyout{
+	position:fixed;
+	width:300px;
+	top:290px;
+	
+	left:-283px;
+	
+	z-index:1000;
+	
+	-ms-transform: rotate(90deg); /* IE 9 */
+    -webkit-transform: rotate(90deg); /* Chrome, Safari, Opera */
+    transform: rotate(90deg);
+}
+.bii-flyout .bii-onglet{
+	border-top-left-radius: 5px;
+	border-top-right-radius: 5px;
+	height:35px;
+	text-align: center;
+	font-weight: bold;
+	font-size:23px;
+	line-height:35px;
+	cursor:pointer;
+}
+.bii-flyout .bii-flyout-content{
+	-ms-transform: rotate(-90deg); /* IE 9 */
+    -webkit-transform: rotate(-90deg); /* Chrome, Safari, Opera */
+    transform: rotate(-90deg);
+	background-color: #fff;
+	height:300px;
+	padding:10px;
+	overflow:hidden;
+}
