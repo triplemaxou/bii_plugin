@@ -5,7 +5,7 @@
   Description: Bii_plugin : Plugin de développement de biilink. Ce plugin ajoute des fonctions de débug en cours de développement, de gestion de l'interface d'admin, de débug SEO et des fonctionnalités front office
   Version: 0.5.1
   Author: BiilinkAgency
-  GitHub Plugin URI: https://github.com/poissont/Bii_plugin
+  GitHub Plugin URI: https://github.com/poissont/bii_plugin
   GitHub Branch:     master
  */
 
