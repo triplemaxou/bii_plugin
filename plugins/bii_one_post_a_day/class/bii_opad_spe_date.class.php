@@ -23,16 +23,15 @@ class bii_opad_spe_date extends bii_item_opad {
 				$id_posts = $items[0]->id_posts();
 			}
 		}
-
 		if ($id_posts == 0) {
-
 			$date = date("z");
 			$count_opad = bii_posts_opad::nb();
-			$id = $date % $count_opad + 1;
-			$item = new bii_posts_opad($id);
-			pre($item,'green');
-			$id_posts = $item->id_posts();
-			
+			$index = $date % $count_opad;
+			$list_item = bii_posts_opad::all_items("lang ='$lang'");
+			if (is_array($list_item) && isset($list_item[$index])) {
+				$item = $list_item[$index];
+				$id_posts = $item->id_posts();
+			}
 		}
 		return $id_posts;
 	}
