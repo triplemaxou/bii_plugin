@@ -16,11 +16,15 @@
 				</ul>
 				<form method="post" id="poststuff" action="<?= apply_filters("bii_options_page_link", null) ?>">
 					<?php do_action("bii_options"); ?> 
-					<?php if (bii_canshow_debug()) { ?>
+					<?php if (bii_canshow_debug()) { 
+						ini_set('display_errors', '1');
+						?>
 						<div class="col-xxs-12 pl-zdt bii_option hidden">
 							<h2 class="faa-parent animated-hover"><i class="fa fa-cogs faa-ring"></i> Zone de test</h2>
 							<?php
-							
+//							bii_one_post_a_day_save_post(578);
+//							pre( bii_one_post_a_day_index());
+//							pre(bii_instance::get_me());
 							?>
 						</div>
 					<?php } ?>

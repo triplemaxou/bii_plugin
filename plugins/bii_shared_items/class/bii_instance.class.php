@@ -10,6 +10,7 @@ class bii_instance extends bii_shared_item {
 	protected $is_demo;
 	protected $is_market;
 	protected $is_main;
+	protected $version_bii;
 	protected $host_bdd;
 	protected $user_bdd;
 	protected $name_bdd;
@@ -28,6 +29,7 @@ class bii_instance extends bii_shared_item {
 
 	static function get_me() {
 		$name = get_bloginfo("name");
+//		pre($name);
 		if (!static::name_exist($name)) {
 			global $wpdb;
 			$url = get_bloginfo("url");
@@ -56,7 +58,10 @@ class bii_instance extends bii_shared_item {
 				"host_bdd"=>$connexionArray["host"],
 				"user_bdd"=>$connexionArray["name"],
 				"name_bdd"=>$connexionArray["user"],
-				"pwd_bdd"=>$connexionArray["pwd"],				
+				"pwd_bdd"=>$connexionArray["pwd"],	
+				
+				"version_bii"=>Bii_plugin_version,	
+				
 			];
 			$item = new static();
 			$item->insert();
@@ -64,6 +69,11 @@ class bii_instance extends bii_shared_item {
 		}else{
 			$item = static::from_name($name);
 		}
+		if($item->version_bii != Bii_plugin_version){
+			$arrayUpdate = ["version_bii"=>Bii_plugin_version];
+			$item->updateChamps($arrayUpdate);
+		}
+//		pre($item,"blue");
 		return $item;
 	}
 	

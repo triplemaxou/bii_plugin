@@ -15,7 +15,7 @@ define('bii_shared_items_url', plugin_dir_url(__FILE__));
 
 add_action("bii_informations", function() {
 	?>
-	<tbody id="bii_bdd">
+	<tbody id="bii_shared_items">
 		<tr><th colspan="2">Bii_shared_items</th>
 		<tr><td>Les comptes uniques sont </td><td><?= bii_makebutton("bii_use_shared_items", 1); ?></td></tr>
 	</tbody>
@@ -129,10 +129,6 @@ function bii_shared_items_option_submit() {
 //				pre($betheme_options);
 				update_option("betheme", $betheme_options);
 			}
-
-
-
-
 			if ($um_options) {
 				$um_options["active_color"] = $newcolor;
 				$um_options["secondary_color"] = $instance->secondary_color();
