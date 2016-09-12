@@ -180,29 +180,50 @@ function bii_shared_items_SC_galaxies() {
 	return $contents;
 }
 
-function bii_shared_items_save_post($post_id) {
+function bii_shared_items_get_instances_of_post($post_id, $lang) {
 
-	$post = get_post($post_id);
+	$instancespostin = [];
+//	pre($type,'violet');
 
-	$type = $post->post_type;
-	if ($type == "product") {
-		$lang = apply_filters("bii_multilingual_current_language",'');
-		$categories = wp_get_post_categories($post_id);
-		$slugs = [];
-		foreach ($categories as $id_cat) {
-			$cat = get_category($id_cat);
-			$slugs[] = $cat->slug;
-		}
-		$instances = bii_instance::all_items();
-		$instancespostin = [];
-		foreach ($instances as $instance) {
-			$sluginstance = $instance->slug($lang);
-			if(in_array($sluginstance, $slugs)){
-				$instancespostin[] = $instance;
-			}
-		}
-		pre($instancespostin);
+
+	$categories = get_the_terms($post_id, 'product_cat');
+//		pre($categories,'orange');
+	$slugs = [];
+	foreach ($categories as $id_cat) {
+		$cat = get_category($id_cat);
+		$slugs[] = $cat->slug;
 	}
+//		pre($slugs,'red');
+	$instances = bii_instance::all_items();
+	$instancespostin = [];
+	foreach ($instances as $instance) {
+		$sluginstance = $instance->slug($lang);
+		if (in_array($sluginstance, $slugs)) {
+			$instancespostin[] = $instance;
+		}
+	}
+//		pre($instancespostin,'blue');
+
+	return $instancespostin;
+}
+
+function bii_shared_items_save_post($post_id) {
+	$post = get_post($post_id);
+//	pre($post->guid);
+	$type = $post->post_type;
+	$instances = [];
+	$lang = apply_filters("bii_multilingual_current_language", '');
+	if ($type == "product") {
+		$instances = bii_shared_items_get_instances_of_post($post_id, $lang);
+		foreach ($instances as $instance) {
+			$instance_id = $instance->id();
+		}
+	}
+}
+
+function bii_shared_items_test_zone() {
+	$instance = new bii_instance(6);
+	pre($instance->sayHello());
 }
 
 if (get_option("bii_use_shared_items") && get_option("bii_useclasses")) {
@@ -218,4 +239,7 @@ if (get_option("bii_use_shared_items") && get_option("bii_useclasses")) {
 	add_action("bii_add_menu_pages", "bii_shared_items_menu");
 
 	add_shortcode("bii_galaxies", "bii_shared_items_SC_galaxies");
+
+
+	add_action('bii_plugin_test_zone', 'bii_shared_items_test_zone');
 }

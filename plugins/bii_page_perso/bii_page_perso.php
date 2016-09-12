@@ -136,19 +136,18 @@ function bii_page_pro_boutique($args = []) {
 	if ($lang == "fr") {
 		$link = "http://demo.biilink.com/bii-market/fr/tableau-bord-vendeur/";
 	}
-	
 	?>
 	<div>
 		<p>
 			Connectez vous à votre boutique en cliquant sur le lien suivant
 			<a href="<?= $link ?>" target="_blank">Cliquez ici</a>
-			
-			
+
+
 		</p>
-		
-		
+
+
 	</div>
-		
+
 	<?php
 }
 
@@ -160,12 +159,78 @@ function bii_page_pro_nfum_select_file_label($text = "") {
 	return $text;
 }
 
+function bii_page_perso_get_logos_json() {
+	$user_id = get_current_user_id();
+	$page_perso = bii_page_perso::get_page_perso();
+	$query_images_args = array(
+		'post_type' => 'attachment',
+		'post_mime_type' => 'image',
+		'post_status' => 'inherit',
+		'posts_per_page' => - 1,
+		'author' => $user_id,
+	);
+	$array = [];
+	$query_images = new WP_Query($query_images_args);
+	$images = $page_perso->getImage();
+	$id_selected = 0;
+	if (isset($images[0])) {
+		$id_selected = $images[0]->post_id();
+	}
+	foreach ($query_images->posts as $image) {
+//		pre($image, "blue");
+
+		$imagesrc = wp_get_attachment_image_src($image->ID, 'thumbnail')[0];
+//		pre($imagesrc, "green");
+		$selected = "false";
+		if($image->ID == $id_selected){
+			$selected = "true";
+		}
+		/*
+		  text: "Placeholder1",
+		  value: 7,
+		  selected: false,
+		  description: "Placeholder1",
+		  imageSrc: "http://demo.groupejador.fr/bii-car/wp-content/uploads/2016/08/fotolia_90554292-150x150.jpg"
+		 */
+		$array[] = [
+			"text" => $image->post_title,
+			"value" => $image->ID,
+			"selected" => $selected,
+			"description" => $image->post_content,
+			"imageSrc" => $imagesrc,
+		];
+		
+	}
+	
+	$json = json_encode($array);
+//	pre($json, "blue");
+	return $json;
+}
+
+function biipage_perso_additionnal_js_var() {
+	$class = apply_filters("body_class");
+	if(in_array("bii_page_perso_edit", $class)){
+		echo "var bii_ddData = ".bii_page_perso_get_logos_json().";";
+	}else{
+		echo "var bii_ddData = [];";
+		
+	}
+	echo "console.log(bii_ddData);";
+}
+
+function bii_page_perso_test_zone() {
+//	bii_page_perso_get_logos_json();
+}
+
 if (get_option("bii_use_page_perso")) {
 	add_action("bii_after_include_class", "bii_include_class_page_perso", 10);
 	add_action("bii_add_menu_pages", "bii_page_perso_menu");
 	add_action("init", "bii_page_perso_after_init");
 
 
+	add_action("bii_additionnal_js_var", "biipage_perso_additionnal_js_var");
+	
+	
 	add_shortcode("bii_page_perso_form_edit", "bii_SC_page_perso_form_edit");
 
 	add_filter('um_user_profile_tabs', "bii_page_perso_profile_tabs");
@@ -173,4 +238,6 @@ if (get_option("bii_use_page_perso")) {
 	add_action('um_profile_content_page_pro_edit_default', "bii_page_pro_edit_default");
 	add_action('um_profile_content_photos_edit_default', "bii_page_pro_edit_images");
 	add_action('um_profile_content_boutique_default', "bii_page_pro_boutique");
+
+	add_action('bii_plugin_test_zone', 'bii_page_perso_test_zone');
 }

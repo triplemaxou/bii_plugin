@@ -26,4 +26,9 @@ function bii_enqueue_scripts() {
 	}
 }
 
+function bii_plugin_test_zone(){
+	
+}
+
 add_action('wp_enqueue_scripts', 'bii_enqueue_scripts');
+add_action('bii_plugin_test_zone', 'bii_plugin_test_zone');

@@ -166,5 +166,9 @@ class posts extends global_class {
 //		pre($intersec,"green");
 		return $intersec;
 	}
+	
+	public function script_bdd($prefix = null,$author = null){
+		
+	}
 
 }

@@ -22,9 +22,7 @@
 						<div class="col-xxs-12 pl-zdt bii_option hidden">
 							<h2 class="faa-parent animated-hover"><i class="fa fa-cogs faa-ring"></i> Zone de test</h2>
 							<?php
-//							bii_one_post_a_day_save_post(578);
-//							pre( bii_one_post_a_day_index());
-//							pre(bii_instance::get_me());
+							do_action("bii_plugin_test_zone");
 							?>
 						</div>
 					<?php } ?>

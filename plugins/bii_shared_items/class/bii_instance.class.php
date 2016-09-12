@@ -15,6 +15,7 @@ class bii_instance extends bii_shared_item {
 	protected $user_bdd;
 	protected $name_bdd;
 	protected $pwd_bdd;
+	protected $prefix_bdd;
 
 	function get_bdd() {
 		$rpdo_host = $this->host_bdd;
@@ -33,7 +34,7 @@ class bii_instance extends bii_shared_item {
 		if (!static::name_exist($name)) {
 			global $wpdb;
 			$url = get_bloginfo("url");
-
+			$prefix = $table_prefix;
 			$wpextended = new wpdbExtended($wpdb);
 			$connexionArray = $wpextended->connexionArray();
 
@@ -58,6 +59,7 @@ class bii_instance extends bii_shared_item {
 				"user_bdd" => $connexionArray["name"],
 				"name_bdd" => $connexionArray["user"],
 				"pwd_bdd" => $connexionArray["pwd"],
+				"prefix_bdd" => posts::prefix_bdd(),
 				"version_bii" => Bii_plugin_version,
 			];
 			$item = new static();
@@ -68,6 +70,10 @@ class bii_instance extends bii_shared_item {
 		}
 		if ($item->version_bii != Bii_plugin_version) {
 			$arrayUpdate = ["version_bii" => Bii_plugin_version];
+			$item->updateChamps($arrayUpdate);
+		}
+		if ($item->prefix_bdd != $prefix) {
+			$arrayUpdate = ["prefix_bdd" => $prefix];
 			$item->updateChamps($arrayUpdate);
 		}
 //		pre($item,"blue");
@@ -211,11 +217,63 @@ class bii_instance extends bii_shared_item {
 		$name = str_ireplace("bii", "", $name);
 		$lower = strtolower($name);
 		$slugs = static::sluglangarray($lang);
-		if(isset($slugs[$lower])){
+		if (isset($slugs[$lower])) {
 			return $slugs[$lower];
-		}else{
+		} else {
 			return "not-found";
 		}
+	}
+
+	function postURL() {
+		return $this->url() . "/wp-json/wc/v1/products";
+	}
+
+	function XMLRPCURL() {
+		return $this->url() . "/xmlrpc.php";
+	}
+
+	function send_request($requestname, $params) {
+		$request = xmlrpc_encode_request($requestname, $params);
+		$ch = curl_init();
+		curl_setopt($ch, CURLOPT_POSTFIELDS, $request);
+		curl_setopt($ch, CURLOPT_URL, $this->XMLRPCURL());
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+		curl_setopt($ch, CURLOPT_TIMEOUT, 1);
+		$results = curl_exec($ch);
+		curl_close($ch);
+		return $results;
+	}
+
+	function sayHello() {
+		$params = array();
+		return $this->send_request('demo.sayHello', $params);
+	}
+
+	function createProduct($data) {
+		
+	}
+
+	protected static function do_curl($url, $data) {
+		$datastring = "";
+
+		foreach ($data as $key => $value) {
+			$datastring .= $key . '=' . urlencode($value) . '&';
+		}
+		rtrim($datastring, '&');
+
+		//open connection
+		$ch = curl_init();
+
+		//set the url, number of POST vars, POST data
+		curl_setopt($ch, CURLOPT_URL, $url);
+		curl_setopt($ch, CURLOPT_POST, count($data));
+		curl_setopt($ch, CURLOPT_POSTFIELDS, $datastring);
+
+		//execute post
+		$result = curl_exec($ch);
+		//close connection
+		curl_close($ch);
+		return $result;
 	}
 
 	// */

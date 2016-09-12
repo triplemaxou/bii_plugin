@@ -3,13 +3,13 @@
 /*
   Plugin Name: Bii_plugin
   Description: Bii_plugin : Plugin de développement de biilink. Ce plugin ajoute des fonctions de débug en cours de développement, de gestion de l'interface d'admin, de débug SEO et des fonctionnalités front office
-  Version: 0.6.0
+  Version: 0.6.1
   Author: BiilinkAgency
   GitHub Plugin URI: https://github.com/poissont/bii_plugin
   GitHub Branch:     master
  */
 
-define('Bii_plugin_version', '0.6.0');
+define('Bii_plugin_version', '0.6.1');
 define('Bii_path', plugin_dir_path(__FILE__));
 define('Bii_url', plugin_dir_url(__FILE__));
 define('Bii_file', __FILE__);
@@ -39,6 +39,7 @@ if (!get_option("bii_plugin_installed")) {
 $liste_bii_plugins = [
 	"bii_debug",
 	"bii_bdd",
+	//Plugins utilisant des classes
 	"bii_communes",	
 	"bii_calculatrices",
 	"bii_multilingual",
@@ -48,13 +49,14 @@ $liste_bii_plugins = [
 	"bii_finance",
 	"bii_shared_items",
 	"bii_one_post_a_day",
+	//Bii advanced admin
 	"bii_advanced_admin",
+	//Plugins de CSS, js shortcodes... etc
 	"bii_css",
 	"bii_check_seo",
 	"bii_advanced_shortcodes",
 	"bii_restricted_content",
-	"bii_social",
-	
+	"bii_social",	
 ];
 
 foreach ($liste_bii_plugins as $plugin) {
