@@ -38,15 +38,7 @@ jQuery(function ($) {
 		$("#bii_cover option").each(function () {
 			var val = $(this).val();
 			var html = $(this).html();
-			if (val.indexOf("img_top_WWW_home.jpg") != -1) {
-				html = "Image par défaut";
-			}
-			if (val.indexOf("bg_slide_invit_WWW.jpg") != -1) {
-				html = "Image 1";
-			}
-			if (val.indexOf("img_slide2_full_page_wonderwomenworld.jpg") != -1) {
-				html = "Image 2";
-			}
+			
 			$(this).html(html);
 		});
 

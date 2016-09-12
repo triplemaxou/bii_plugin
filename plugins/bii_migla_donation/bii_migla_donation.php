@@ -2,12 +2,12 @@
 /*
   Plugin Name: bii_migla_donation
   Description: Ajoute des fonctions supplémentaires au plugin total donation
-  Version: 0.1
+  Version: 0.4
   Author: Biilink Agency
   Author URI: http://biilink.com/
   License: GPL2
  */
-define('bii_migla_donation_version', '0.3');
+define('bii_migla_donation_version', '0.4');
 define('bii_migla_donation_path', plugin_dir_path(__FILE__));
 define('bii_migla_donation_url', plugin_dir_url(__FILE__));
 
@@ -73,7 +73,7 @@ function bii_migla_autoinsert(){
 	
 }
 
-if (get_option("bii_use_migla_donation")) {
+if (get_option("bii_use_migla_donation")&& get_option("bii_useclasses")) {
 	add_action("bii_after_include_class", "bii_migla_include_classes", 11);
 	add_action("admin_init", "bii_migla_checkdonation",200);
 	add_action('wp_enqueue_scripts', "bii_migla_enqueueJS");

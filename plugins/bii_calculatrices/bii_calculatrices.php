@@ -94,7 +94,7 @@ add_action("bii_informations", function() {
 	<?php
 }, 12);
 
-if (get_option("bii_use_calculatrice")) {
+if (get_option("bii_use_calculatrice")&& get_option("bii_useclasses")) {
 
 	add_shortcode('bii_calculatrice', 'bii_calculatrices_SC_calc');
 	add_filter("bii_calculatrice_noms", "bii_calculatrice_noms");

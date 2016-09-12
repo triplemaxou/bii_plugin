@@ -8,7 +8,7 @@
   License: GPL2
  */
 
-define('bii_one_post_a_day_items_version', '0.1');
+define('bii_one_post_a_day_items_version', '0.2');
 define('bii_one_post_a_day_items_path', plugin_dir_path(__FILE__));
 define('bii_one_post_a_day_items_url', plugin_dir_url(__FILE__));
 
@@ -73,7 +73,7 @@ function bii_one_post_a_day_index() {
 	return bii_opad_spe_date::get_post_of_the_day();
 }
 
-if (get_option("bii_use_opad")) {
+if (get_option("bii_use_opad") && get_option("bii_useclasses")) {
 	add_action("bii_after_include_class", "bii_include_class_one_post_a_day", 10);
 	add_action("bii_add_menu_pages", "bii_one_post_a_day_menu");
 

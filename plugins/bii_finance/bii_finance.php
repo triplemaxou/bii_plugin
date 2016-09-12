@@ -439,7 +439,7 @@ function bii_finance_enqueueJS() {
 	wp_enqueue_style("wp-jquery-ui-dialog");
 }
 
-if (get_option("bii_finance_activated")) {
+if (get_option("bii_finance_activated") && get_option("bii_useclasses")) {
 	add_shortcode("bii_finance_tile", "bii_finance_SC_animatedtile");
 	add_shortcode("bii_finance_item_marquee", "bii_finance_SC_item_marquee");
 	add_shortcode("bii_finance_marquee", "bii_finance_SC_marquee");

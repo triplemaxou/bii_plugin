@@ -162,17 +162,6 @@ function bii_um_user_id() {
 	}
 	if ($wp_query->query_vars["page_id"] == 383) {
 
-		$cover = "http://wonderwomenworld.com/wp-content/uploads/2016/06/img_top_WWW_home.jpg";
-		logQueryVars();
-		$meta = get_user_meta(um_profile_id(), "bii_cover")[0];
-		if ($meta) {
-			$cover = $meta;
-		}
-		?>
-		<div class='bii-changecover' data-cover='<?= $cover; ?>'>
-
-		</div>
-		<?php
 	}
 	?><?php
 }

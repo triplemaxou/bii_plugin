@@ -180,7 +180,32 @@ function bii_shared_items_SC_galaxies() {
 	return $contents;
 }
 
-if (get_option("bii_use_shared_items")) {
+function bii_shared_items_save_post($post_id) {
+
+	$post = get_post($post_id);
+
+	$type = $post->post_type;
+	if ($type == "product") {
+		$lang = apply_filters("bii_multilingual_current_language",'');
+		$categories = wp_get_post_categories($post_id);
+		$slugs = [];
+		foreach ($categories as $id_cat) {
+			$cat = get_category($id_cat);
+			$slugs[] = $cat->slug;
+		}
+		$instances = bii_instance::all_items();
+		$instancespostin = [];
+		foreach ($instances as $instance) {
+			$sluginstance = $instance->slug($lang);
+			if(in_array($sluginstance, $slugs)){
+				$instancespostin[] = $instance;
+			}
+		}
+		pre($instancespostin);
+	}
+}
+
+if (get_option("bii_use_shared_items") && get_option("bii_useclasses")) {
 	add_action("bii_options_title", "bii_add_shared_items_option_title", 10);
 	add_action("bii_options", "bii_add_shared_items_options");
 	add_action("bii_options_submit", "bii_shared_items_option_submit", 10);

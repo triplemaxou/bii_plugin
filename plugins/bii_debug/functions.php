@@ -197,7 +197,7 @@ if (!function_exists("debugEcho")) {
 		
 	}
 
-	function bii_makebutton($option, $pluriel = false, $feminin = false, $invert = false) {
+	function bii_makebutton($option, $pluriel = false, $feminin = false, $invert = false, $disabled = false) {
 		$array_switch = ["désactivé", "activé"];
 //	$array_switch = ["désactivé", "activé"];
 		$gotoval = 1;
@@ -225,7 +225,11 @@ if (!function_exists("debugEcho")) {
 		if ($pluriel) {
 			$valtexte.="s";
 		}
-		$button = "<button data-newval='$gotoval' data-option='$option' class='bii_upval btn btn-info'><i class='fa $facheck'></i> $valtexte</button>";
+		$valdisabled = "";
+		if($disabled){
+			$valdisabled = "disabled='disabled";
+		}
+		$button = "<button data-newval='$gotoval' data-option='$option' $valdisabled class='bii_upval btn btn-info'><i class='fa $facheck'></i> $valtexte</button>";
 		return $button;
 	}
 

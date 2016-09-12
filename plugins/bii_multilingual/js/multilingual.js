@@ -78,9 +78,7 @@ jQuery(function ($) {
 			text = text.replaceAll("Commentaires", "Comments");
 			$(this).html(text);
 		});
-		$(".um-account-meta a").each(function () {
-			$(this).attr("href", "http://wonderwomenworld.com/voir-un-utilisateur/?lang=en");
-		});
+		
 		$(".menu-item:not(.bii_menu-item-language)").each(function () {
 			var text = $(this).html();
 			text = text.replaceAll("Le Mag'", "Mag");

@@ -33,64 +33,64 @@ class bii_instance extends bii_shared_item {
 		if (!static::name_exist($name)) {
 			global $wpdb;
 			$url = get_bloginfo("url");
-			
+
 			$wpextended = new wpdbExtended($wpdb);
 			$connexionArray = $wpextended->connexionArray();
-			
-			
-			$is_demo = 0;			
-			$is_market = 0;			
-			if(strpos($url, "demo.biilink.com") !== false || strpos($url, "demo.groupejador.fr") !== false){
+
+
+			$is_demo = 0;
+			$is_market = 0;
+			if (strpos($url, "demo.biilink.com") !== false || strpos($url, "demo.groupejador.fr") !== false) {
 				$is_demo = 1;
 			}
-			if(strpos($url, "market") !== false){
+			if (strpos($url, "market") !== false) {
 				$is_market = 1;
 			}
 			$arrayUpdate = [
-				"url"=>$url,
-				"name"=>$name,
-				"is_demo"=>$is_demo,
-				"is_test"=>0,
-				"is_main"=>0,
-				"color"=>"",
-				"is_market"=>$is_market,
-				
-				"host_bdd"=>$connexionArray["host"],
-				"user_bdd"=>$connexionArray["name"],
-				"name_bdd"=>$connexionArray["user"],
-				"pwd_bdd"=>$connexionArray["pwd"],	
-				
-				"version_bii"=>Bii_plugin_version,	
-				
+				"url" => $url,
+				"name" => $name,
+				"is_demo" => $is_demo,
+				"is_test" => 0,
+				"is_main" => 0,
+				"color" => "",
+				"is_market" => $is_market,
+				"host_bdd" => $connexionArray["host"],
+				"user_bdd" => $connexionArray["name"],
+				"name_bdd" => $connexionArray["user"],
+				"pwd_bdd" => $connexionArray["pwd"],
+				"version_bii" => Bii_plugin_version,
 			];
 			$item = new static();
 			$item->insert();
 			$item->updateChamps($arrayUpdate);
-		}else{
+		} else {
 			$item = static::from_name($name);
 		}
-		if($item->version_bii != Bii_plugin_version){
-			$arrayUpdate = ["version_bii"=>Bii_plugin_version];
+		if ($item->version_bii != Bii_plugin_version) {
+			$arrayUpdate = ["version_bii" => Bii_plugin_version];
 			$item->updateChamps($arrayUpdate);
 		}
 //		pre($item,"blue");
 		return $item;
 	}
-	
-	static function get_my_id(){
+
+	static function get_my_id() {
 		return static::get_me()->id();
 	}
 
 	static function url_exist($url) {
 		return static::nb("url = '$url'");
 	}
+
 	static function name_exist($name) {
 		return static::nb("name = '$name'");
 	}
+
 	static function from_url($url) {
 		$items = static::all_items("url = '$url'");
 		return $items[0];
 	}
+
 	static function from_name($name) {
 		$items = static::all_items("name = '$name'");
 		return $items[0];
@@ -103,27 +103,30 @@ class bii_instance extends bii_shared_item {
 	 * </p>
 	 * @return string la couleur en hexadécimal
 	 */
-	function color($percent = 1){
-		if($percent == 1){
+	function color($percent = 1) {
+		if ($percent == 1) {
 			return $this->color;
-		}else{
+		} else {
 			return static::colourBrightness($this->color, $percent);
 		}
 	}
-	
-	function general_color(){
+
+	function general_color() {
 		return $this->color();
 	}
-	function emphasis_color(){
+
+	function emphasis_color() {
 		return $this->color(0.8);
 	}
-	function secondary_color(){
+
+	function secondary_color() {
 		return $this->color(1.2);
 	}
-	function secondary_emphasis_color(){
+
+	function secondary_emphasis_color() {
 		return $this->color(0.9);
 	}
-	
+
 	static public function colourBrightness($hex, $percent) {
 		// Work out if hash given
 		$hash = '';
@@ -163,18 +166,57 @@ class bii_instance extends bii_shared_item {
 		}
 		return $hash . $hex;
 	}
-	
-	function shortcode_name(){
+
+	function shortcode_name() {
 		$name = $this->name();
-		
-		$name = str_ireplace("bii-","Bii ",$name);
-		$name = str_ireplace("bii_","Bii ",$name);
+
+		$name = str_ireplace("bii-", "Bii ", $name);
+		$name = str_ireplace("bii_", "Bii ", $name);
 //		pre($name);
-		
+
 		$name = ucwords($name);
-		$name = str_ireplace("Bii ","<strong>Bii</strong>",$name);
-		
+		$name = str_ireplace("Bii ", "<strong>Bii</strong>", $name);
+
 		return $name;
 	}
+
+	static function sluglangarray($lang = "fr") {
+		$slugs = [
+			"travel" => "voyages",
+			"finance" => "finance-fr",
+			"car" => "voiture",
+			"art" => "art-fr",
+			"beauty" => "beaute",
+			"food" => "cuisine",
+			"fashion" => "mode",
+		];
+		if ($lang == "en") {
+			$slugs = [
+				"travel" => "travel",
+				"finance" => "finance",
+				"car" => "car",
+				"art" => "art",
+				"beauty" => "beauty",
+				"food" => "food",
+				"fashion" => "fashion",
+			];
+		}
+		return $slugs;
+	}
+
+	function slug($lang) {
+		$name = $this->name();
+		$name = str_ireplace("bii-", "", $name);
+		$name = str_ireplace("bii_", "", $name);
+		$name = str_ireplace("bii", "", $name);
+		$lower = strtolower($name);
+		$slugs = static::sluglangarray($lang);
+		if(isset($slugs[$lower])){
+			return $slugs[$lower];
+		}else{
+			return "not-found";
+		}
+	}
+
 	// */
 }

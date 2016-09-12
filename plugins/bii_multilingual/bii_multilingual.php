@@ -371,8 +371,7 @@ function bii_um_multilingual_tabs($tabs) {
 }
 
 function bii_um_multilingual_add_rewrite_rules($aRules) {
-	$aNewRules = array("^voir-un-utilisateur/([a-zA-Z0-9]*)/?lang=en" => "http://wonderwomenworld.com/user-information/([a-zA-Z0-9]*)/?lang=en");
-	$aRules = $aNewRules + $aRules;
+	
 }
 
 function bii_multilingual_filter_date_i18n($j, $req_format, $i, $gmt) {
@@ -460,7 +459,7 @@ function bii_multilingual_nfum_dataTableOptions($value = "") {
 	return $value;
 }
 
-if (get_option("bii_use_multilingual")) {
+if (get_option("bii_use_multilingual") && get_option("bii_useclasses")) {
 	add_filter("bii_multilingual_default_language_selection_admin_script", "bii_multilingual_default_language_selection_admin_script");
 	add_filter("bii_multilingual_default_language_admin_selection", "bii_multilingual_default_language_admin_selection");
 	add_filter("bii_multilingual_real_baseurl", "bii_multilingual_real_baseurl", 10, 2);
