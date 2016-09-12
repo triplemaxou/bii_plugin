@@ -2,12 +2,12 @@
 /*
   Plugin Name: BiiDebug
   Description: Ajoute des fonctions de débug, invisibles pour le public
-  Version: 2.4
+  Version: 2.4.1
   Author: Biilink Agency
   Author URI: http://biilink.com/
   License: GPL2
  */
-define('bii_debug_version', '2.4');
+define('bii_debug_version', '2.4.1');
 
 define('BiiDebug_path', plugin_dir_path(__FILE__));
 define('bii_debug_path', plugin_dir_path(__FILE__));
@@ -67,7 +67,7 @@ function bii_showlogs() {
 	}
 	?>
 	<script type="text/javascript" src="http://l2.io/ip.js?var=myip"></script>
-	<script type="text/javascript">
+	<script type="text/javascript" id="varsforbii">
 		var ajaxurl = '<?= admin_url('admin-ajax.php'); ?>';
 		var bloginfourl = '<?= get_bloginfo("url") ?>';
 		var bii_showlogs = false;
