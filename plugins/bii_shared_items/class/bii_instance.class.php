@@ -52,10 +52,12 @@ class bii_instance extends bii_shared_item {
 	static function get_me() {
 		$name = get_bloginfo("name");
 //		pre($name);
+		global $wpdb,$table_prefix;
+		$prefix = $table_prefix;
 		if (!static::name_exist($name)) {
-			global $wpdb;
+			
 			$url = get_bloginfo("url");
-			$prefix = $table_prefix;
+			
 			$wpextended = new wpdbExtended($wpdb);
 			$connexionArray = $wpextended->connexionArray();
 

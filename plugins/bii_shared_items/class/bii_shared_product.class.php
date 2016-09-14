@@ -30,7 +30,10 @@ class bii_shared_product extends bii_shared_item {
 	function id_trad() {
 		$id_trad = $this->id_trad;
 		if (!$id_trad) {
-			
+			if ($this->id_bii_instance == bii_instance::get_my_id() && $this->is_lang_checked) {
+				$trid = icl_translations::get_trad_base_of($this->id_posts());
+				$this->updateChamps($trid, "id_trad");
+			}
 		}
 		return $id_trad;
 	}
@@ -48,7 +51,7 @@ class bii_shared_product extends bii_shared_item {
 
 			$args = [
 				'element_id' => $this->id_posts(),
-				'element_type' => "product",
+				'element_type' => "post_product",
 				'trid' => $this->id_trad(),
 				'language_code' => $this->lang(),
 				'source_language_code' => $this->source_language_code()
@@ -56,6 +59,7 @@ class bii_shared_product extends bii_shared_item {
 			do_action('wpml_set_element_language_details', $args);
 			$this->updateChamps(1, "is_lang_checked");
 		}
+		$this->id_trad();
 	}
 
 	static function posts_from_instance($id_instance, $return = "id_posts") {
@@ -118,16 +122,66 @@ class bii_shared_product extends bii_shared_item {
 		$req = "id_posts = '$id_posts' AND lang = '$lang' AND id_bii_instance = $id_bii_instance";
 		$nb = static::nb($req);
 		if ($nb) {
-			$id = static::all_id($req)[0];
+			$id = static::all_id($req)[0];			
 		} else {
 			$id = static::add_post($id_posts, $id_bii_instance, $lang, $id_parent, $id_trad);
 		}
+		
+		if($id_bii_instance == bii_instance::get_my_id()){
+			$trid = icl_translations::get_trad_base_of($id_posts);
+			$lang = icl_translations::get_language_of($id_posts);
+			$item = new static($id);
+			$array = ["id_trad"=>$trid,"lang"=>$lang];
+			$item->updateChamps($array);
+		}
+
 		return $id;
+	}
+
+	static function delete_product($id_post) {
+		$instance_id = bii_instance::get_my_id();
+		$req = "id_posts = '$id_post' and id_bii_instance = '$instance_id'";
+		$list = static::all_items($req);
+		foreach ($list as $item) {
+			$children = $item->get_children();
+			foreach ($children as $child) {
+				if (is_a($child, "bii_shared_product")) {
+					$child->delete();
+				}
+			}
+			$item->delete();
+		}
+	}
+
+	function get_children() {
+		return static::all_items("id_parent = " . $this->id);
+	}
+
+	function deleteInInstance($instance) {
+		if (!is_a($instance,"bii_instance")) {
+			$instance = new bii_instance($instance);
+		}
+		bii_write_log($instance);
+		$pass = $instance->password_import();
+
+		$body['remote_post_id'] = $this->id_posts;
+		$body['cutomaction'] = 'delete';
+		$body['passkey'] = $pass;
+		$this->send_request($instance);
+	}
+
+	function delete() {
+		$instance = $this->id_bii_instance();
+		$instance_id = bii_instance::get_my_id();
+		if ($instance != $instance_id) {
+			$this->deleteInInstance($instance);
+		}
+		parent::delete();
 	}
 
 	function bodypost($instance) {
 		//get post object
-		if (is_int($instance)) {
+		if (!is_a($instance,"bii_instance")) {
 			$instance = new bii_instance($instance);
 		}
 		$url = $instance->url_import();
@@ -140,7 +194,7 @@ class bii_shared_product extends bii_shared_item {
 	function send_request($instance) {
 		$body = $this->bodypost($instance);
 		$url = $instance->url_import();
-		$url .= "&icl_post_language=" . $this->lang();
+//		$url .= "&icl_post_language=" . $this->lang();
 		return wp_remote_post($url, array(
 			'method' => 'POST',
 			'timeout' => 45,
@@ -168,7 +222,7 @@ class bii_shared_product extends bii_shared_item {
 		$remote_post_ids[$otherinstance->url_import()] = $remote_post_id;
 		update_post_meta($this->id_posts, 'remote_post_id', $remote_post_ids);
 
-		return static::update_shared_product($remote_post_id, $otherinstance, $this->lang, $this->id, 0);
+		return static::update_shared_product($remote_post_id, $otherinstance, $this->lang, $this->id, $this->id_trad);
 	}
 
 }

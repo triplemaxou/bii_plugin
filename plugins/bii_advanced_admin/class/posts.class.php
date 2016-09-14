@@ -168,10 +168,7 @@ class posts extends global_class {
 	}
 	
 	function wp_remote_postbody($url,$pass,$lang = null) {
-		//get post object
-		
-		
-		
+		//get post object		
 		$post_id = $this->ID;
 		$post = get_post($post_id, ARRAY_A);
 

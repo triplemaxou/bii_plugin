@@ -190,12 +190,15 @@ function bii_shared_items_get_instances_of_post($post_id, $lang = "") {
 
 	$categories = get_the_terms($post_id, 'product_cat');
 //		pre($categories,'orange');
-
+	$i = 1;
 	foreach ($categories as $id_cat) {
 		$cat = get_category($id_cat);
-
-		$instancespostin[] = bii_instance::fromCategory($cat->slug);
+		$nomvar = "instancespostin$i";
+		$$nomvar = bii_instance::fromCategory($cat->slug);
+		$instancespostin = array_merge($instancespostin,$$nomvar);
+		++$i;
 	}
+	
 	$instancespostin = array_unique($instancespostin);
 	pre($instancespostin, "blue");
 	return $instancespostin;
@@ -213,23 +216,29 @@ function bii_shared_items_save_post($post_id) {
 
 
 		$id_trad = icl_translations::get_trad_base_of($post_id);
-		bii_shared_product::update_shared_product($post_id, $instance, $lang, 0, $id_trad);
+		$id_sharedproduct = bii_shared_product::update_shared_product($post_id, $instance, $lang, 0, $id_trad);
 
 		$instances = bii_shared_items_get_instances_of_post($post_id, $lang);
+		if (count($instances)) {
+			$shared_product = new bii_shared_product($id_sharedproduct);
+			foreach ($instances as $otherinstance) {
+				$shared_product->postToInstance($otherinstance);
+			}
+		}
+	}
+}
+
+function bii_shared_items_delete_post($post_id) {
+	$post = get_post($post_id);
+//	pre($post->guid);
+	$type = $post->post_type;
+	if ($type == "product") {
+		bii_shared_product::delete_product($post_id);
 	}
 }
 
 function bii_shared_items_test_zone() {
-//	bii_shared_items_get_instances_of_post(1415);
-//	bii_shared_items_get_instances_of_post(1406);
-////	$id_post = 1406;
-////	$id = bii_shared_product::add_post($id_post, bii_instance::get_my_id(), "en");
-//	$item = new bii_shared_product(3);
-//	pre($item->postToInstance(10));
-	$instance_id = bii_instance::get_my_id();
-	if ($instance_id == 10) {
-		bii_shared_product::checklangs();
-	}
+	
 }
 
 function bii_shared_itemsreturn1() {
@@ -255,4 +264,5 @@ if (get_option("bii_use_shared_items") && get_option("bii_useclasses")) {
 	add_action('bii_plugin_test_zone', 'bii_shared_items_test_zone');
 
 	add_action("save_post", "bii_shared_items_save_post");
+	add_action("delete_post", "bii_shared_items_delete_post");
 }
