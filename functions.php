@@ -30,5 +30,12 @@ function bii_plugin_test_zone(){
 	
 }
 
+function bii_add_favicon() {
+  	$favicon_url = Bii_url . 'img/favicon.ico';
+	echo '<link rel="shortcut icon" href="' . $favicon_url . '" />';
+}
+  
+add_action('admin_head', 'bii_add_favicon');
+
 add_action('wp_enqueue_scripts', 'bii_enqueue_scripts');
 add_action('bii_plugin_test_zone', 'bii_plugin_test_zone');

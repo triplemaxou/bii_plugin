@@ -167,8 +167,96 @@ class posts extends global_class {
 		return $intersec;
 	}
 	
-	public function script_bdd($prefix = null,$author = null){
+	function wp_remote_postbody($url,$pass,$lang = null) {
+		//get post object
 		
+		
+		
+		$post_id = $this->ID;
+		$post = get_post($post_id, ARRAY_A);
+
+		//get post meta
+		$post_meta = get_post_meta($post_id);
+		if($lang == null){
+			$lang = apply_filters("bii_multilingual_current_language",$lang);
+			
+		}
+		
+		unset($post_meta['remote_post_id']);
+
+		$remote_post_ids = get_post_meta($post_id, 'remote_post_id', true);
+		if ($remote_post_ids) {
+			if (!empty($remote_post_ids[$url])) {
+				$post_meta['remote_post_id'][0] = $remote_post_ids[$url];
+			}
+		}
+		//get custom taxonmies registered against this post type
+		$post_type = $post['post_type'];
+		$taxonomies = get_object_taxonomies($post_type, 'objects');
+		$post_taxonomies_cats = array();
+		$post_taxonomies_tags = array();
+		foreach ($taxonomies as $taxonomy_slug => $taxonomy) {
+			//save post terms in the respective taxonomy index
+			$terms = wp_get_post_terms($post_id, $taxonomy_slug);
+			if (!is_wp_error($terms)) {
+				$termstosync = array();
+				foreach ($terms as $key => $term) {
+					$t_id = $term->term_id;
+					$option_name = $taxonomy_slug . "_" . $t_id;
+					if (!empty($t_id)) {
+						if (get_option($option_name) != '-1') {
+							$termstosync[] = $term;
+						} else {
+							return -1;
+						}
+					}
+				}
+				if ($taxonomy->hierarchical == 1) {
+					$post_taxonomies_cats[$taxonomy_slug] = $termstosync;
+				} else {
+					$post_taxonomies_tags[$taxonomy_slug] = $termstosync;
+				}
+			}
+		}
+		//check if post has featured image
+		$featuredimage_url = '';
+		if (has_post_thumbnail($post_id)) {
+			$post_thumbnail_id = get_post_thumbnail_id($post_id);
+			$featuredimage_url = wp_get_attachment_url($post_thumbnail_id);
+		}
+
+		//check if post type is woocommerce product
+		if ($post['post_type'] == 'product') {
+			$galleryimages = explode(',', $post_meta['_product_image_gallery'][0]);
+			$_product_image_gallery_urls = array();
+			if ($galleryimages) {
+				foreach ($galleryimages as $key => $image) {
+					$_product_image_gallery_urls[$image] = wp_get_attachment_url($image);
+				}
+			}
+			$body['product_image_gallery_urls'] = $_product_image_gallery_urls;
+		}
+
+
+		//remove the things we don't need
+		unset($post['guid']);
+		unset($post_meta['_edit_lock']);
+		unset($post_meta['_edit_last']);
+		unset($post_meta['_pingme']);
+		unset($post_meta['_encloseme']);
+		unset($post_meta['_thumbnail_id']);
+
+
+		$body['passkey'] = $pass;
+		$body['post'] = $post;
+		$body['post_type'] = $post_type;
+		$body['post_meta'] = $post_meta;
+		$body['featuredimage_url'] = $featuredimage_url;
+		$body['post_taxonomies_cats'] = $post_taxonomies_cats;
+		$body['post_taxonomies_tags'] = $post_taxonomies_tags;
+		$body["_wpml_language"] = $lang;
+		$post_meta["_wpml_language"] = $lang;
+		return $body;
 	}
 
 }

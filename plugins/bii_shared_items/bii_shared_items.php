@@ -25,6 +25,7 @@ add_action("bii_informations", function() {
 function bii_include_class_shared_items() {
 	$liste_class = [
 		"bii_shared_item",
+		"bii_shared_product",
 		"bii_instance",
 		"bii_user",
 		"bii_user_instance",
@@ -150,6 +151,7 @@ function bii_shared_items_colorpicker() {
 function bii_shared_items_menu() {
 	if (class_exists("bii_ambassador")) {
 		bii_ambassador::displaySousMenu();
+		bii_instance::displaySousMenu();
 	}
 }
 
@@ -180,7 +182,7 @@ function bii_shared_items_SC_galaxies() {
 	return $contents;
 }
 
-function bii_shared_items_get_instances_of_post($post_id, $lang) {
+function bii_shared_items_get_instances_of_post($post_id, $lang = "") {
 
 	$instancespostin = [];
 //	pre($type,'violet');
@@ -188,42 +190,42 @@ function bii_shared_items_get_instances_of_post($post_id, $lang) {
 
 	$categories = get_the_terms($post_id, 'product_cat');
 //		pre($categories,'orange');
-	$slugs = [];
+
 	foreach ($categories as $id_cat) {
 		$cat = get_category($id_cat);
-		$slugs[] = $cat->slug;
-	}
-//		pre($slugs,'red');
-	$instances = bii_instance::all_items();
-	$instancespostin = [];
-	foreach ($instances as $instance) {
-		$sluginstance = $instance->slug($lang);
-		if (in_array($sluginstance, $slugs)) {
-			$instancespostin[] = $instance;
-		}
-	}
-//		pre($instancespostin,'blue');
 
+		$instancespostin[] = bii_instance::fromCategory($cat->slug);
+	}
+	$instancespostin = array_unique($instancespostin);
+	pre($instancespostin, "blue");
 	return $instancespostin;
 }
 
 function bii_shared_items_save_post($post_id) {
 	$post = get_post($post_id);
+
 //	pre($post->guid);
 	$type = $post->post_type;
 	$instances = [];
 	$lang = apply_filters("bii_multilingual_current_language", '');
 	if ($type == "product") {
+		$instance = bii_instance::get_me();
+
+
+		$id_trad = icl_translations::get_trad_base_of($post_id);
+		bii_shared_product::update_shared_product($post_id, $instance, $lang, 0, $id_trad);
+
 		$instances = bii_shared_items_get_instances_of_post($post_id, $lang);
-		foreach ($instances as $instance) {
-			$instance_id = $instance->id();
-		}
 	}
 }
 
 function bii_shared_items_test_zone() {
-	$instance = new bii_instance(6);
-	pre($instance->sayHello());
+	bii_shared_items_get_instances_of_post(1415);
+	bii_shared_items_get_instances_of_post(1406);
+//	$id_post = 1406;
+//	$id = bii_shared_product::add_post($id_post, bii_instance::get_my_id(), "en");
+	$item = new bii_shared_product(3);
+	pre($item->postToInstance(10));
 }
 
 if (get_option("bii_use_shared_items") && get_option("bii_useclasses")) {
@@ -242,4 +244,6 @@ if (get_option("bii_use_shared_items") && get_option("bii_useclasses")) {
 
 
 	add_action('bii_plugin_test_zone', 'bii_shared_items_test_zone');
+
+	add_action("save_post", "bii_shared_items_save_post");
 }

@@ -5,6 +5,7 @@ class bii_instance extends bii_shared_item {
 	protected $id;
 	protected $url;
 	protected $name;
+	protected $categories;
 	protected $color;
 	protected $is_test;
 	protected $is_demo;
@@ -16,6 +17,8 @@ class bii_instance extends bii_shared_item {
 	protected $name_bdd;
 	protected $pwd_bdd;
 	protected $prefix_bdd;
+	protected $url_import;
+	protected $password_import;
 
 	function get_bdd() {
 		$rpdo_host = $this->host_bdd;
@@ -26,6 +29,24 @@ class bii_instance extends bii_shared_item {
 		$db = new PDO('mysql:host=' . $rpdo_host . ';dbname=' . $rpdo_name, $rpdo_user, $rpdo_pwd);
 		$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
 		return $db;
+	}
+
+	function url_import() {
+		$url = $this->url_import;
+		if (!$url) {
+			$url = $this->url() . "/wp-admin/admin-ajax.php?action=create_update_post";
+			$this->updateChamps($url, "url_import");
+		}
+		return $url;
+	}
+
+	function password_import() {
+		$pass = $this->password_import;
+		if (!$pass) {
+			$pass = md5($this->url_import());
+			$this->updateChamps($pass, "password_import");
+		}
+		return $pass;
 	}
 
 	static function get_me() {
@@ -184,6 +205,19 @@ class bii_instance extends bii_shared_item {
 		$name = str_ireplace("Bii ", "<strong>Bii</strong>", $name);
 
 		return $name;
+	}
+
+	static function fromCategory($category) {
+		$ret = [];
+		if ($category) {
+			$req = "categories like '%$category%'";
+			$ids = static::all_id($req);
+			$ids = array_unique($ids);
+			foreach($ids as $id){
+				$ret[] = new static($id);
+			}
+		}
+		return $ret;
 	}
 
 	static function sluglangarray($lang = "fr") {
