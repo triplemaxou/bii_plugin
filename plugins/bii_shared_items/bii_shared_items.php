@@ -220,12 +220,16 @@ function bii_shared_items_save_post($post_id) {
 }
 
 function bii_shared_items_test_zone() {
-	bii_shared_items_get_instances_of_post(1415);
-	bii_shared_items_get_instances_of_post(1406);
-//	$id_post = 1406;
-//	$id = bii_shared_product::add_post($id_post, bii_instance::get_my_id(), "en");
-	$item = new bii_shared_product(3);
-	pre($item->postToInstance(10));
+//	bii_shared_items_get_instances_of_post(1415);
+//	bii_shared_items_get_instances_of_post(1406);
+////	$id_post = 1406;
+////	$id = bii_shared_product::add_post($id_post, bii_instance::get_my_id(), "en");
+//	$item = new bii_shared_product(3);
+//	pre($item->postToInstance(10));
+	$instance_id = bii_instance::get_my_id();
+	if($instance_id == 10){
+		bii_shared_product::checklangs();
+	}
 }
 
 if (get_option("bii_use_shared_items") && get_option("bii_useclasses")) {
