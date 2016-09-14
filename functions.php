@@ -31,7 +31,8 @@ function bii_plugin_test_zone(){
 }
 
 function bii_add_favicon() {
-  	$favicon_url = Bii_url . 'img/favicon.ico';
+	$instance_id = apply_filters("bii_shared_items_my_instance_id");
+  	$favicon_url = Bii_url . 'img/favicon'.$instance_id.'.ico';
 	echo '<link rel="shortcut icon" href="' . $favicon_url . '" />';
 }
   

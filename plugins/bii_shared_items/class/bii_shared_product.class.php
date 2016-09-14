@@ -87,6 +87,7 @@ class bii_shared_product extends bii_shared_item {
 		$instanceid = $myinstance->id();
 		$liste_shared_product = static::posts_from_instance($instanceid, "shared_product");
 		foreach ($liste_shared_product as $item) {
+			pre($item, "green");
 			$item->changelang();
 		}
 	}
