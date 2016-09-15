@@ -19,7 +19,7 @@ class bii_user extends bii_shared_item {
 	protected $mail_paypal;
 	protected $have_shop;
 	protected $hashed_password;
-	
+	protected $registred;
 
 	static function add_user($id_user) {
 		$userwp = new users($id_user);
@@ -58,6 +58,7 @@ class bii_user extends bii_shared_item {
 			"surname" => $values_meta["last_name"],
 			"country" => $values_meta["country"],
 			"hashed_password" => $userwp->user_pass(),
+			"registred" => $userwp->user_registred(),
 		];
 		$user = new static();
 		$user->insert();
@@ -67,29 +68,77 @@ class bii_user extends bii_shared_item {
 		foreach ($values_meta as $meta => $value) {
 			bii_user_meta::add_or_replace($user_id, $meta, $value);
 		}
-		
+
 		return $user_id;
 	}
 
 	static function get_user($id_wordpress) {
-		
 		$userwp = new users($id_wordpress);
 		$mail = $userwp->user_email();
 		if (static::count_from_mail($mail)) {
 //			pre(static::get_from_mail($mail)->id());
-			$ret =  static::get_from_mail($mail)->id();
+			$ret = static::get_from_mail($mail)->id();
 		} else {
-			
+
 			$ret = static::add_user($id_wordpress);
 		}
 		bii_user_instance::add_user($ret, $id_wordpress);
 		return $ret;
 	}
-	
-	function synchronize(){
-		
+
+	function get_metas() {
+		$usermeta = bii_user_meta::all_items("id_user = " . $this->id());
+		return $usermeta;
 	}
 	
+	function display_name(){
+		$name = $this->name();
+		$surname = $this->surname();
+		$company = $this->company();
+		if($company){
+			$display = $company;
+		}else if($name && $surname){
+			$display = "$surname $name";
+		}else{
+			$display = $this->username();
+		}
+		return $display;
+	}
+	
+	function arrayValuesToUpdate(){
+		return [
+			"user_url"=>$this->url(),
+			"display_name"=>$this->display_name(),
+			'user_pass'=>$this->hashed_password(),
+			'user_registred'=>$this->registred(),
+		];
+	}
+
+	function synchronize() {
+		$username = $this->username();
+		$password = $this->hashed_password();
+		$email = $this->mail();
+		$id_wordpress = wp_create_user($username, $password, $email);
+		if (is_int($id_wordpress)) {
+			$user = new users($id_wordpress);
+			$user->updateChamps($this->arrayValuesToUpdate());
+			$usermetas = $this->get_metas();
+			foreach ($usermetas as $meta) {
+				$meta->synchronize($id_wordpress);
+			}
+			bii_user_instance::add_synced_user($this->id, $id_wordpress);
+		}else{
+			pre($id_wordpress);
+		}
+	}
+
+	static function synchronize_all() {
+		$liste_id = bii_user_instance::users_not_in_my_instance();
+		foreach ($liste_id as $id_user) {
+			$item = new static($id_user);
+			$item->synchronize();
+		}
+	}
 
 	static function get_from_username($username) {
 		return static::all_items("username = '$username'")[0];
@@ -115,8 +164,8 @@ class bii_user extends bii_shared_item {
 	function option_value() {
 		return utf8_encode($this->name);
 	}
-	
-	static function passerelle_user(){
+
+	static function passerelle_user() {
 		
 	}
 

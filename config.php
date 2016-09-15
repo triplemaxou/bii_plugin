@@ -1,8 +1,10 @@
 <?php
 
-
 function bii_action_links($links) {
-	$links[] = '<a href="' . esc_url(get_admin_url(null, 'admin.php?page=bii_plugin')) . '">Paramètres</a>';
+	$links[] = '<a href="' . esc_url(get_admin_url(null, 'options-general.php?page=bii_plugin_options')) . '">Paramètres</a>';
+	if (get_option("bii_usedashboard")) {
+		$links[] = '<a href="' . esc_url(get_admin_url(null, 'admin.php?page=bii_plugin')) . '">Dashboard</a>';
+	}
 	return $links;
 }
 

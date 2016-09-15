@@ -39,7 +39,9 @@ class bii_user_meta extends bii_shared_item {
 		return $id;		
 	}
 	
-	
+	function synchronize($id_wordpress){
+		return update_user_meta($id_wordpress, $this->meta_key(), $this->meta_value());
+	}
 	
 	// */
 }

@@ -45,6 +45,7 @@ function bii_include_class_shared_items() {
 	}
 	bii_shared_items_my_instance();
 	bii_shared_product::checklangs();
+	bii_user::synchronize_all();
 }
 
 function bii_shared_items_my_instance() {
@@ -241,10 +242,17 @@ function bii_shared_items_delete_post($post_id) {
 }
 
 function bii_shared_items_test_zone() {
-	$users = users::all_id();
-	foreach($users as $user_id){
-		bii_shared_items_add_user($user_id);
-	}
+//	bii_user::synchronize_all();
+}
+function bii_shared_items_dashboard_content() {
+	?>
+	<div class="changelogs col-xxs-12 col-sm-6">
+		<h2>Changelog</h2>
+		<?php
+			bii_changelog::lastChangelogs(9);
+		?>
+	</div>
+	<?php
 }
 
 function bii_shared_items_current_user() {
@@ -281,6 +289,7 @@ add_filter("bii_shared_items_my_instance_id", "bii_shared_itemsreturn1", 10);
 if (get_option("bii_use_shared_items") && get_option("bii_useclasses")) {
 	add_action("bii_options_title", "bii_add_shared_items_option_title", 10);
 	add_action("bii_options", "bii_add_shared_items_options");
+	add_action("bii_dashboard_content", "bii_shared_items_dashboard_content");
 	add_action("bii_options_submit", "bii_shared_items_option_submit", 10);
 
 	add_action("bii_after_include_class", "bii_include_class_shared_items", 10);
