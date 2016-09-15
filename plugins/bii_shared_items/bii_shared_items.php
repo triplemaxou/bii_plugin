@@ -31,6 +31,7 @@ function bii_include_class_shared_items() {
 		"bii_user_instance",
 		"bii_user_meta",
 		"bii_ambassador",
+		"bii_changelog",
 	];
 //	bii_write_log($liste_class);
 	foreach ($liste_class as $class) {
@@ -153,6 +154,7 @@ function bii_shared_items_menu() {
 	if (class_exists("bii_ambassador")) {
 		bii_ambassador::displaySousMenu();
 		bii_instance::displaySousMenu();
+		bii_changelog::displaySousMenu();
 	}
 }
 
