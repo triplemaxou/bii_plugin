@@ -90,27 +90,27 @@ class bii_user extends bii_shared_item {
 		$usermeta = bii_user_meta::all_items("id_user = " . $this->id());
 		return $usermeta;
 	}
-	
-	function display_name(){
+
+	function display_name() {
 		$name = $this->name();
 		$surname = $this->surname();
 		$company = $this->company();
-		if($company){
+		if ($company) {
 			$display = $company;
-		}else if($name && $surname){
+		} else if ($name && $surname) {
 			$display = "$surname $name";
-		}else{
+		} else {
 			$display = $this->username();
 		}
 		return $display;
 	}
-	
-	function arrayValuesToUpdate(){
+
+	function arrayValuesToUpdate() {
 		return [
-			"user_url"=>$this->url(),
-			"display_name"=>$this->display_name(),
-			'user_pass'=>$this->hashed_password(),
-			'user_registred'=>$this->registred(),
+			"user_url" => $this->url(),
+			"display_name" => $this->display_name(),
+			'user_pass' => $this->hashed_password(),
+			'user_registred' => $this->registred(),
 		];
 	}
 
@@ -127,12 +127,13 @@ class bii_user extends bii_shared_item {
 				$meta->synchronize($id_wordpress);
 			}
 			bii_user_instance::add_synced_user($this->id, $id_wordpress);
-		}else{
+		} else {
 			pre($id_wordpress);
 		}
 	}
 
 	static function synchronize_all() {
+		static::passerelle_user();
 		$liste_id = bii_user_instance::users_not_in_my_instance();
 		foreach ($liste_id as $id_user) {
 			$item = new static($id_user);
@@ -166,7 +167,10 @@ class bii_user extends bii_shared_item {
 	}
 
 	static function passerelle_user() {
-		
+		$users = users::all_id();
+		foreach ($users as $user_id) {
+			bii_user::get_user($user_id);
+		}
 	}
 
 	// */
