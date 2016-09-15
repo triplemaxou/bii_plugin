@@ -87,10 +87,10 @@ function bii_page_perso_profile_tabs($tabs) {
 	$user_id = get_current_user_id();
 	$displayed_id = um_profile_id();
 	if ($user_id == $displayed_id) {
-		$tabs["page_pro_edit"] = [
-			"name" => __("Modifier ma page pro"),
-			"icon" => "um-faicon-certificate",
-		];
+//		$tabs["page_pro_edit"] = [
+//			"name" => __("Modifier ma page pro"),
+//			"icon" => "um-faicon-certificate",
+//		];
 
 		if (bii_page_perso::has_page_perso($displayed_id)) {
 			$tabs["page_pro"] = [
@@ -108,10 +108,10 @@ function bii_page_perso_profile_tabs($tabs) {
 		];
 	} else {
 		if (bii_page_perso::has_page_perso($displayed_id)) {
-			$tabs["page_pro"] = [
-				"name" => __("Voir sa page pro"),
-				"icon" => "um-faicon-eye",
-			];
+//			$tabs["page_pro"] = [
+//				"name" => __("Voir sa page pro"),
+//				"icon" => "um-faicon-eye",
+//			];
 		}
 	}
 	unset($tabs["posts"]);

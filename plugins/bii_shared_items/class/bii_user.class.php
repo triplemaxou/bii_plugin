@@ -18,8 +18,10 @@ class bii_user extends bii_shared_item {
 	protected $mail;
 	protected $mail_paypal;
 	protected $have_shop;
+	protected $hashed_password;
+	
 
-	static function add_user($instance, $id_user) {
+	static function add_user($id_user) {
 		$userwp = new users($id_user);
 //		$userwpmeta = usermeta::all_items("user_id = $id_user");
 		$array_meta_to_keep = [
@@ -55,6 +57,7 @@ class bii_user extends bii_shared_item {
 			"name" => $values_meta["first_name"],
 			"surname" => $values_meta["last_name"],
 			"country" => $values_meta["country"],
+			"hashed_password" => $userwp->user_pass(),
 		];
 		$user = new static();
 		$user->insert();
@@ -64,28 +67,29 @@ class bii_user extends bii_shared_item {
 		foreach ($values_meta as $meta => $value) {
 			bii_user_meta::add_or_replace($user_id, $meta, $value);
 		}
-		bii_user_instance::add_user($instance, $user_id, $id_user, $userwp->user_pass());
+		
 		return $user_id;
 	}
 
 	static function get_user($id_wordpress) {
-		$instance = bii_instance::get_my_id();
+		
 		$userwp = new users($id_wordpress);
 		$mail = $userwp->user_email();
 		if (static::count_from_mail($mail)) {
-			pre(static::get_from_mail($mail)->id());
-			return static::get_from_mail($mail)->id();
+//			pre(static::get_from_mail($mail)->id());
+			$ret =  static::get_from_mail($mail)->id();
 		} else {
-
-//		pre($instance);
-			$id_bii = bii_user_instance::get_user_in_instance($instance, $id_wordpress);
-			if ($id_bii) {
-				return $id_bii;
-			} else {
-				return static::add_user($instance, $id_wordpress);
-			}
+			
+			$ret = static::add_user($id_wordpress);
 		}
+		bii_user_instance::add_user($ret, $id_wordpress);
+		return $ret;
 	}
+	
+	function synchronize(){
+		
+	}
+	
 
 	static function get_from_username($username) {
 		return static::all_items("username = '$username'")[0];
@@ -109,8 +113,11 @@ class bii_user extends bii_shared_item {
 	}
 
 	function option_value() {
-
 		return utf8_encode($this->name);
+	}
+	
+	static function passerelle_user(){
+		
 	}
 
 	// */

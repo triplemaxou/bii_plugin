@@ -2,13 +2,13 @@
 /*
   Plugin Name: Bii_shared_items
   Description: Gestion d'un système de compte unique à plusieurs wordpress
-  Version: 0.3
+  Version: 0.4
   Author: Biilink Agency
   Author URI: http://biilink.com/
   License: GPL2
  */
 
-define('bii_shared_items_version', '0.3');
+define('bii_shared_items_version', '0.4');
 define('bii_shared_items_path', plugin_dir_path(__FILE__));
 define('bii_shared_items_url', plugin_dir_url(__FILE__));
 
@@ -43,6 +43,7 @@ function bii_include_class_shared_items() {
 		}
 	}
 	bii_shared_items_my_instance();
+	bii_shared_product::checklangs();
 }
 
 function bii_shared_items_my_instance() {
@@ -195,10 +196,10 @@ function bii_shared_items_get_instances_of_post($post_id, $lang = "") {
 		$cat = get_category($id_cat);
 		$nomvar = "instancespostin$i";
 		$$nomvar = bii_instance::fromCategory($cat->slug);
-		$instancespostin = array_merge($instancespostin,$$nomvar);
+		$instancespostin = array_merge($instancespostin, $$nomvar);
 		++$i;
 	}
-	
+
 	$instancespostin = array_unique($instancespostin);
 	pre($instancespostin, "blue");
 	return $instancespostin;
@@ -238,6 +239,35 @@ function bii_shared_items_delete_post($post_id) {
 }
 
 function bii_shared_items_test_zone() {
+	$users = users::all_id();
+	foreach($users as $user_id){
+		bii_shared_items_add_user($user_id);
+	}
+}
+
+function bii_shared_items_current_user() {
+	
+}
+
+function bii_shared_items_current_user_id() {
+	
+}
+
+function bii_shared_items_add_user($user_id) {
+	$user = new users($user_id);
+//	$mail_user = $user->user_email();
+	$id_user_bii = bii_user::get_user($user_id);
+}
+
+function bii_shared_items_update_user($user_id, $old_user_data) {
+	
+}
+
+function bii_shared_items_update_user_meta($meta_id, $object_id, $meta_key, $_meta_value) {
+	
+}
+
+function bii_shared_items_remove_user($user_id) {
 	
 }
 
@@ -265,4 +295,9 @@ if (get_option("bii_use_shared_items") && get_option("bii_useclasses")) {
 
 	add_action("save_post", "bii_shared_items_save_post");
 	add_action("delete_post", "bii_shared_items_delete_post");
+
+	add_action("user_register", "bii_shared_items_add_user");
+	add_action("delete_user", "bii_shared_items_remove_user");
+	add_action('profile_update', 'bii_shared_items_update_user', 10, 2);
+	add_action('updated_user_meta', 'bii_shared_items_update_user_meta', 10, 4);
 }

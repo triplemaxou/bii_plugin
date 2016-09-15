@@ -5,28 +5,27 @@ class bii_user_instance extends bii_shared_item {
 	protected $id;
 	protected $id_bii_user;
 	protected $id_wp_user;
-	protected $instance;
-	protected $hashed_password;
+	protected $id_bii_instance;
+	protected $is_sync;
 	protected $is_active;
 
-	static function add_user($instance,$id_bii,$id_wp,$pwd) {
-		$item = new static();
-		$array_insert = ["instance" => $instance,"id_bii_user"=>$id_bii,"id_wp_user"=>$id_wp,"hashed_password"=>$pwd,"is_active"=>1];
-		$item->insert();
-		$item->updateChamps($array_insert);
+	static function add_user($id_bii, $id_wp) {
+		$id_instance = bii_instance::get_my_id();
+		
+		$req = "id_bii_instance = $id_instance and id_wp_user = $id_wp";
+		if (!static::nb($req)) {
+
+			$item = new static();
+			$array_insert = ["id_bii_instance" => $id_instance, "id_bii_user" => $id_bii, "id_wp_user" => $id_wp, "is_active" => 1, "is_sync" => 0];
+			$item->insert();
+			$item->updateChamps($array_insert);
+			$id = $item->id();
+		} else {
+			$id = static::all_id($req)[0];
+		}
+		return $id;
 	}
 
-	static function get_user_in_instance($instance,$id_wp){
-		$return = 0;
-		$req = "instance = $instance and id_wp_user = $id_wp";
-		if(static::nb($req)){
-			$ids = static::all_id($req);
-			pre($ids);
-			$item = new static($ids[0]);
-			$return = $item->id_bii_user();
-		}
-		return $return;
-	}
 
 	// */
 }
