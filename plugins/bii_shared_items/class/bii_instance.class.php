@@ -19,6 +19,7 @@ class bii_instance extends bii_shared_item {
 	protected $prefix_bdd;
 	protected $url_import;
 	protected $password_import;
+
 	
 	protected static $myid;
 	protected static $myself;
