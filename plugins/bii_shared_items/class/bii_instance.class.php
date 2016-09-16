@@ -50,61 +50,75 @@ class bii_instance extends bii_shared_item {
 	}
 
 	static function get_me() {
-		$name = get_bloginfo("name");
+		$me = static::$myself;
+		if (!$me) {
+
+
+			$name = get_bloginfo("name");
 //		pre($name);
-		global $wpdb,$table_prefix;
-		$prefix = $table_prefix;
-		if (!static::name_exist($name)) {
-			
-			$url = get_bloginfo("url");
-			
-			$wpextended = new wpdbExtended($wpdb);
-			$connexionArray = $wpextended->connexionArray();
+			global $wpdb, $table_prefix;
+			$prefix = $table_prefix;
+			if (!static::name_exist($name)) {
+
+				$url = get_bloginfo("url");
+
+				$wpextended = new wpdbExtended($wpdb);
+				$connexionArray = $wpextended->connexionArray();
 
 
-			$is_demo = 0;
-			$is_market = 0;
-			if (strpos($url, "demo.biilink.com") !== false || strpos($url, "demo.groupejador.fr") !== false) {
-				$is_demo = 1;
+				$is_demo = 0;
+				$is_market = 0;
+				if (strpos($url, "demo.biilink.com") !== false || strpos($url, "demo.groupejador.fr") !== false) {
+					$is_demo = 1;
+				}
+				if (strpos($url, "market") !== false) {
+					$is_market = 1;
+				}
+				$arrayUpdate = [
+					"url" => $url,
+					"name" => $name,
+					"is_demo" => $is_demo,
+					"is_test" => 0,
+					"is_main" => 0,
+					"color" => "",
+					"is_market" => $is_market,
+					"host_bdd" => $connexionArray["host"],
+					"user_bdd" => $connexionArray["name"],
+					"name_bdd" => $connexionArray["user"],
+					"pwd_bdd" => $connexionArray["pwd"],
+					"prefix_bdd" => posts::prefix_bdd(),
+					"version_bii" => Bii_plugin_version,
+				];
+				$item = new static();
+				$item->insert();
+				$item->updateChamps($arrayUpdate);
+			} else {
+				$item = static::from_name($name);
 			}
-			if (strpos($url, "market") !== false) {
-				$is_market = 1;
+			if ($item->version_bii != Bii_plugin_version) {
+				$arrayUpdate = ["version_bii" => Bii_plugin_version];
+				$item->updateChamps($arrayUpdate);
 			}
-			$arrayUpdate = [
-				"url" => $url,
-				"name" => $name,
-				"is_demo" => $is_demo,
-				"is_test" => 0,
-				"is_main" => 0,
-				"color" => "",
-				"is_market" => $is_market,
-				"host_bdd" => $connexionArray["host"],
-				"user_bdd" => $connexionArray["name"],
-				"name_bdd" => $connexionArray["user"],
-				"pwd_bdd" => $connexionArray["pwd"],
-				"prefix_bdd" => posts::prefix_bdd(),
-				"version_bii" => Bii_plugin_version,
-			];
-			$item = new static();
-			$item->insert();
-			$item->updateChamps($arrayUpdate);
-		} else {
-			$item = static::from_name($name);
-		}
-		if ($item->version_bii != Bii_plugin_version) {
-			$arrayUpdate = ["version_bii" => Bii_plugin_version];
-			$item->updateChamps($arrayUpdate);
-		}
-		if ($item->prefix_bdd != $prefix) {
-			$arrayUpdate = ["prefix_bdd" => $prefix];
-			$item->updateChamps($arrayUpdate);
-		}
+			if ($item->prefix_bdd != $prefix) {
+				$arrayUpdate = ["prefix_bdd" => $prefix];
+				$item->updateChamps($arrayUpdate);
+			}
 //		pre($item,"blue");
-		return $item;
+			$me = $item;
+			static::$myself = $me;
+		}
+		return $me;
 	}
 
 	static function get_my_id() {
-		return static::get_me()->id();
+		$my_id = static::$myid;
+		if (!$my_id) {
+
+			$my_id = static::get_me()->id();
+			static::$myid = $me;
+		}
+
+		return $my_id;
 	}
 
 	static function url_exist($url) {
@@ -215,7 +229,7 @@ class bii_instance extends bii_shared_item {
 			$req = "categories like '%$category%'";
 			$ids = static::all_id($req);
 			$ids = array_unique($ids);
-			foreach($ids as $id){
+			foreach ($ids as $id) {
 				$ret[] = new static($id);
 			}
 		}

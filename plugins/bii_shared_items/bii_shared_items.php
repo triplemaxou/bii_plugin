@@ -30,6 +30,7 @@ function bii_include_class_shared_items() {
 		"bii_user",
 		"bii_user_instance",
 		"bii_user_meta",
+		"bii_user_post",
 		"bii_ambassador",
 		"bii_changelog",
 	];
@@ -43,6 +44,7 @@ function bii_include_class_shared_items() {
 			}
 		}
 	}
+	require_once( ABSPATH . WPINC . '/pluggable.php' );
 	bii_shared_items_my_instance();
 	bii_shared_product::checklangs();
 	bii_user::synchronize_all();
@@ -215,6 +217,10 @@ function bii_shared_items_save_post($post_id) {
 	$type = $post->post_type;
 	$instances = [];
 	$lang = apply_filters("bii_multilingual_current_language", '');
+	$id_user = $post->post_author;
+	bii_user_post::addpost($id_user, $post_id);
+	
+	
 	if ($type == "product") {
 		$instance = bii_instance::get_me();
 
@@ -230,6 +236,9 @@ function bii_shared_items_save_post($post_id) {
 			}
 		}
 	}
+//	if($type == ""){
+//		
+//	}
 }
 
 function bii_shared_items_delete_post($post_id) {
@@ -263,7 +272,7 @@ function bii_shared_items_current_user_id() {
 	
 }
 
-function bii_shared_items_add_user($user_id) {
+function bii_shared_items_add_user($user_id) {	
 	$user = new users($user_id);
 //	$mail_user = $user->user_email();
 	$id_user_bii = bii_user::get_user($user_id);
