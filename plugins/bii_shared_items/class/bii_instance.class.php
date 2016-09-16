@@ -19,6 +19,9 @@ class bii_instance extends bii_shared_item {
 	protected $prefix_bdd;
 	protected $url_import;
 	protected $password_import;
+	
+	protected static $myid;
+	protected static $myself;
 
 	function get_bdd() {
 		$rpdo_host = $this->host_bdd;
