@@ -176,9 +176,9 @@ function bii_shared_items_SC_galaxies() {
 				}
 				?>
 				<li class="galaxie-item <?= $currentclass ?> <?= $instance->name(); ?>-item"><a href="<?= $instance->url(); ?>"><?= $instance->shortcode_name(); ?></a></li>
-					<?php
-				}
-				?>
+				<?php
+			}
+			?>
 
 		</ul>
 	</div>
@@ -220,7 +220,10 @@ function bii_shared_items_save_post($post_id) {
 	$id_user = $post->post_author;
 	bii_user_post::addpost($id_user, $post_id);
 	
-	
+
+	if ($type == "product") {
+		
+	}
 	if ($type == "product") {
 		$instance = bii_instance::get_me();
 
@@ -253,12 +256,13 @@ function bii_shared_items_delete_post($post_id) {
 function bii_shared_items_test_zone() {
 //	bii_user::synchronize_all();
 }
+
 function bii_shared_items_dashboard_content() {
 	?>
 	<div class="changelogs col-xxs-12 col-sm-6">
 		<h2>Changelog</h2>
 		<?php
-			bii_changelog::lastChangelogs(9);
+		bii_changelog::lastChangelogs(9);
 		?>
 	</div>
 	<?php
@@ -272,7 +276,7 @@ function bii_shared_items_current_user_id() {
 	
 }
 
-function bii_shared_items_add_user($user_id) {	
+function bii_shared_items_add_user($user_id) {
 	$user = new users($user_id);
 //	$mail_user = $user->user_email();
 	$id_user_bii = bii_user::get_user($user_id);
@@ -301,7 +305,7 @@ if (get_option("bii_use_shared_items") && get_option("bii_useclasses")) {
 	add_action("bii_dashboard_content", "bii_shared_items_dashboard_content");
 	add_action("bii_options_submit", "bii_shared_items_option_submit", 10);
 
-	add_action("bii_after_include_class", "bii_include_class_shared_items", 10);
+	add_action("bii_after_include_class", "bii_include_class_shared_items", 11);
 	remove_filter("bii_shared_items_my_instance_id", "bii_shared_itemsreturn1");
 	add_filter("bii_shared_items_my_instance", "bii_shared_items_my_instance", 10);
 	add_filter("bii_shared_items_my_instance_id", "bii_shared_items_my_instance_id", 10);

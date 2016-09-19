@@ -19,6 +19,7 @@ class bii_user extends bii_shared_item {
 	protected $mail_paypal;
 	protected $have_shop;
 	protected $hashed_password;
+	protected $crypted_password;
 	protected $registred;
 
 	static function add_user($id_user) {
@@ -60,6 +61,16 @@ class bii_user extends bii_shared_item {
 			"hashed_password" => $userwp->user_pass(),
 			"registred" => $userwp->user_registred(),
 		];
+		$pass_clair = "";
+		if (isset($_POST['user_password-7'])) {
+			$pass_clair = $_POST['user_password-7'];
+		}
+		if (isset($_POST['pass1'])) {
+			$pass_clair = $_POST['pass1'];
+		}
+		if ($pass_clair) {
+			$array_insert["crypted_password"] = $pass_clair;
+		}
 		$user = new static();
 		$user->insert();
 		$user->updateChamps($array_insert);
@@ -79,17 +90,10 @@ class bii_user extends bii_shared_item {
 //			pre(static::get_from_mail($mail)->id());
 			$item = static::get_from_mail($mail);
 			$ret = $item->id();
-			if ($item->hashed_password != $userwp->user_pass()) {
-				
-				$array_insert = [
-					"user_pass" => $item->hashed_password(),
-					"user_registred" => $item->registred(),
-				];
-				bii_custom_log("Change password of $id_wordpress");
-				bii_custom_log($array_insert);
-				$userwp->updateChamps($array_insert);
-				bii_custom_log($userwp);
-			}
+			$password = $item->crypted_password();
+			bii_custom_log("Password $id_wordpress set to $password");
+//			pre("Password $id_wordpress set to $password");
+			wp_set_password($item->crypted_password(), $id_wordpress);
 		} else {
 			$ret = static::add_user($id_wordpress);
 		}
@@ -127,54 +131,62 @@ class bii_user extends bii_shared_item {
 
 	function synchronize() {
 		$username = $this->username();
-		$password = $this->hashed_password();
+		$password = $this->crypted_password();
 		$email = $this->mail();
-		$req = "user_email = '$email'";
-		$nb = users::nb($req);
-		$array_values = [
-			"user_login"=>$username,
-			"user_pass"=>$password,
-			"user_email"=>$email,
-			"user_url"=>$this->url(),
-			"user_registred"=>$this->registred(),
-			"display_name"=>$this->display_name(),
-		];
-		
-		if($nb){
-			$user = users::all_items($req);
-//			$user->updateChamps($array_values);
-			$this->updateChamps(1, "is_sync");
-		}else{
-			$newuser = new users();
-			$newuser->insert();			
-			$newuser->updateChamps($array_values);
-			$user = $newuser;
-			
-		}
-		$id_wordpress = $user->id();
-		$usermetas = $this->get_metas();
+		$id_wordpress = wp_create_user($username, $password, $email);
+		if (is_int($id_wordpress)) {
+			$user = new users($id_wordpress);
+			$user->updateChamps($this->arrayValuesToUpdate());
+			$usermetas = $this->get_metas();
 			foreach ($usermetas as $meta) {
 				$meta->synchronize($id_wordpress);
 			}
-		
-		$id_wordpress = wp_create_user($username, $password, $email);
-		
-//		
-//		
-//		if (is_int($id_wordpress)) {
-//			$user = new users($id_wordpress);
-//			$user->updateChamps($this->arrayValuesToUpdate());
-//			
-//			bii_user_instance::add_synced_user($this->id, $id_wordpress);
-//			$this->updateChamps(1, "is_sync");
-//		} else {
-//
-//			if (isset($id_wordpress->errors["existing_user_login"])) {
-//				$this->updateChamps(1, "is_sync");
-//			} else {
+			bii_user_instance::add_synced_user($this->id, $id_wordpress);
+			$this->updateChamps(1, "is_sync");
+		} else {
+
+			if (isset($id_wordpress->errors["existing_user_login"])) {
+				$this->updateChamps(1, "is_sync");
+			} else {
 //				pre($id_wordpress);
-//			}
-//		}
+			}
+		}
+	}
+
+	function synchronize_old() {
+		$username = $this->username();
+		$password = $this->hashed_password();
+		$email = $this->mail();
+		$req = "user_email = '$email'";
+		if ($email) {
+			$nb = users::nb($req);
+			$array_values = [
+				"user_login" => $username,
+				"user_pass" => $password,
+				"user_email" => $email,
+				"user_url" => $this->url(),
+				"user_registred" => $this->registred(),
+				"display_name" => $this->display_name(),
+			];
+
+			if ($nb) {
+				$user = users::all_items($req)[0];
+//			$user->updateChamps($array_values);
+				$this->updateChamps(1, "is_sync");
+			} else {
+				$newuser = new users();
+				$newuser->insert();
+				$newuser->updateChamps($array_values);
+				$user = $newuser;
+			}
+			$id_wordpress = $user->id();
+			$usermetas = $this->get_metas();
+			foreach ($usermetas as $meta) {
+				$meta->synchronize($id_wordpress);
+			}
+
+			$id_wordpress = wp_create_user($username, $password, $email);
+		}
 	}
 
 	static function synchronize_all() {
@@ -213,7 +225,7 @@ class bii_user extends bii_shared_item {
 
 	static function passerelle_user() {
 		bii_custom_log("********************Paserelle user************************");
-		
+
 		$users = users::all_id();
 		foreach ($users as $user_id) {
 			bii_user::get_user($user_id);
