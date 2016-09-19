@@ -26,7 +26,7 @@ class bii_user_instance extends bii_shared_item {
 		return $id;
 	}
 	static function add_synced_user($id_bii, $id_wp){
-		return add_user($id_bii, $id_wp,1);
+		return static::add_user($id_bii, $id_wp,1);
 	}
 	
 	static function users_not_in_my_instance(){
