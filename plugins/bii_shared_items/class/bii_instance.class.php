@@ -21,8 +21,8 @@ class bii_instance extends bii_shared_item {
 	protected $password_import;
 
 	
-	protected static $myid;
-	protected static $myself;
+	protected static $myid = 0;
+	protected static $myself = null;
 
 	function get_bdd() {
 		$rpdo_host = $this->host_bdd;
@@ -119,7 +119,7 @@ class bii_instance extends bii_shared_item {
 		if (!$my_id) {
 
 			$my_id = static::get_me()->id();
-			static::$myid = $me;
+			static::$myid = $my_id;
 		}
 
 		return $my_id;

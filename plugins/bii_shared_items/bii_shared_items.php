@@ -47,7 +47,7 @@ function bii_include_class_shared_items() {
 	require_once( ABSPATH . WPINC . '/pluggable.php' );
 	bii_shared_items_my_instance();
 	bii_shared_product::checklangs();
-	bii_user::synchronize_all();
+//	bii_user::synchronize_all();
 }
 
 function bii_shared_items_my_instance() {

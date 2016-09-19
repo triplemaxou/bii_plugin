@@ -29,6 +29,13 @@ class bii_user_instance extends bii_shared_item {
 		return static::add_user($id_bii, $id_wp,1);
 	}
 	
+	static function sync($id_bii){
+		$id_instance = bii_instance::get_my_id();
+		$req = "id_bii_instance = $id_instance and id_bii_user = $id_bii";
+		$item = static::all_item($req)[0];
+		$item->updateChamps(1, "is_sync");
+	}
+	
 	static function users_not_in_my_instance(){
 		$instance_id = bii_instance::get_my_id();
 		$class_name = static::prefix_bdd() . static::nom_classe_bdd();

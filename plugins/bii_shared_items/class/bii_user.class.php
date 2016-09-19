@@ -133,23 +133,32 @@ class bii_user extends bii_shared_item {
 		$username = $this->username();
 		$password = $this->crypted_password();
 		$email = $this->mail();
-		$id_wordpress = wp_create_user($username, $password, $email);
-		if (is_int($id_wordpress)) {
-			$user = new users($id_wordpress);
-			$user->updateChamps($this->arrayValuesToUpdate());
-			$usermetas = $this->get_metas();
-			foreach ($usermetas as $meta) {
-				$meta->synchronize($id_wordpress);
-			}
-			bii_user_instance::add_synced_user($this->id, $id_wordpress);
-			$this->updateChamps(1, "is_sync");
-		} else {
-
-			if (isset($id_wordpress->errors["existing_user_login"])) {
-				$this->updateChamps(1, "is_sync");
+		if ($this->username() != "biilinkagency") {
+			$id_wordpress = wp_create_user($username, $password, $email);
+			if (is_int($id_wordpress)) {
+				$user = new users($id_wordpress);
+				$user->updateChamps($this->arrayValuesToUpdate());
+				$usermetas = $this->get_metas();
+				foreach ($usermetas as $meta) {
+					$meta->synchronize($id_wordpress);
+				}
+				bii_user_instance::add_synced_user($this->id, $id_wordpress);
+//				$this->updateChamps(1, "is_sync");
+				bii_user_instance::sync($this->id);
 			} else {
+
+				if (isset($id_wordpress->errors["existing_user_login"])) {
+//					$this->updateChamps(1, "is_sync");
+					bii_user_instance::sync($this->id);
+				} else {
 //				pre($id_wordpress);
+				}
 			}
+		}
+		if (!$this->mail()) {
+			bii_user_instance::deleteWhere("id_bii_instance = '".$this->id()."'");
+			
+			$this->delete();
 		}
 	}
 
@@ -191,9 +200,10 @@ class bii_user extends bii_shared_item {
 
 	static function synchronize_all() {
 		static::passerelle_user();
-		$liste_id = bii_user_instance::users_not_in_my_instance();
-		foreach ($liste_id as $id_user) {
-			$item = new static($id_user);
+		$instance_id = bii_instance::get_my_id();
+		$liste_items = static::all_items("id in (select distinct id_bii_user from bii_user_instance where id_bii_instance NOT IN('$instance_id') and is_sync = 0)");
+		foreach ($liste_items as $item) {
+
 			$item->synchronize();
 		}
 	}
