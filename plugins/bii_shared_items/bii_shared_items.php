@@ -299,7 +299,7 @@ function bii_shared_itemsreturn1() {
 }
 
 add_filter("bii_shared_items_my_instance_id", "bii_shared_itemsreturn1", 10);
-if (get_option("bii_use_shared_items") && get_option("bii_useclasses")) {
+if (get_option("bii_use_shared_items") && get_option("bii_useclasses") && 0) {
 	add_action("bii_options_title", "bii_add_shared_items_option_title", 10);
 	add_action("bii_options", "bii_add_shared_items_options");
 	add_action("bii_dashboard_content", "bii_shared_items_dashboard_content");
