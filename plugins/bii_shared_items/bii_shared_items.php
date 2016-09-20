@@ -162,7 +162,7 @@ function bii_shared_items_menu() {
 }
 
 function bii_shared_items_SC_galaxies() {
-	$instances = bii_instance::all_items();
+	$instances = bii_instance::all_items("is_demo = 0");
 	$current = bii_instance::get_my_id();
 	ob_start();
 	?>
