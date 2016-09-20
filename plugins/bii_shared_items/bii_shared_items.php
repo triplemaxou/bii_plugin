@@ -45,8 +45,8 @@ function bii_include_class_shared_items() {
 		}
 	}
 	require_once( ABSPATH . WPINC . '/pluggable.php' );
-	bii_shared_items_my_instance();
-	bii_shared_product::checklangs();
+//	bii_shared_items_my_instance();
+//	bii_shared_product::checklangs();
 //	bii_user::synchronize_all();
 }
 
@@ -299,7 +299,7 @@ function bii_shared_itemsreturn1() {
 }
 
 add_filter("bii_shared_items_my_instance_id", "bii_shared_itemsreturn1", 10);
-if (get_option("bii_use_shared_items") && get_option("bii_useclasses") && 0) {
+if (get_option("bii_use_shared_items") && get_option("bii_useclasses")) {
 	add_action("bii_options_title", "bii_add_shared_items_option_title", 10);
 	add_action("bii_options", "bii_add_shared_items_options");
 	add_action("bii_dashboard_content", "bii_shared_items_dashboard_content");
@@ -314,9 +314,9 @@ if (get_option("bii_use_shared_items") && get_option("bii_useclasses") && 0) {
 
 	add_shortcode("bii_galaxies", "bii_shared_items_SC_galaxies");
 
-
+	
 	add_action('bii_plugin_test_zone', 'bii_shared_items_test_zone');
-
+/*
 	add_action("save_post", "bii_shared_items_save_post");
 	add_action("delete_post", "bii_shared_items_delete_post");
 
@@ -324,4 +324,6 @@ if (get_option("bii_use_shared_items") && get_option("bii_useclasses") && 0) {
 	add_action("delete_user", "bii_shared_items_remove_user");
 	add_action('profile_update', 'bii_shared_items_update_user', 10, 2);
 	add_action('updated_user_meta', 'bii_shared_items_update_user_meta', 10, 4);
+	 * 
+	 */
 }
