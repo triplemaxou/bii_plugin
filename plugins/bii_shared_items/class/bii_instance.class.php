@@ -19,8 +19,6 @@ class bii_instance extends bii_shared_item {
 	protected $prefix_bdd;
 	protected $url_import;
 	protected $password_import;
-
-	
 	protected static $myid = 0;
 	protected static $myself = null;
 
@@ -216,14 +214,19 @@ class bii_instance extends bii_shared_item {
 
 	function shortcode_name() {
 		$name = $this->name();
+		if ($name == "Biilink") {
+			$name = "<strong>Bii</strong>link";
+		} else if ($name == "Biilink Market") {
+			$name = "<strong>Bii</strong> Market";
+		} else {
 
-		$name = str_ireplace("bii-", "Bii ", $name);
-		$name = str_ireplace("bii_", "Bii ", $name);
+			$name = str_ireplace("bii-", "Bii ", $name);
+			$name = str_ireplace("bii_", "Bii ", $name);
 //		pre($name);
 
-		$name = ucwords($name);
-		$name = str_ireplace("Bii ", "<strong>Bii</strong>", $name);
-
+			$name = ucwords($name);
+			$name = str_ireplace("Bii ", "<strong>Bii</strong>", $name);
+		}
 		return $name;
 	}
 
