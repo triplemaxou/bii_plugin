@@ -3,6 +3,8 @@
 function bii_enqueue_scripts() {
 	$bii_provider = get_option("bii_provider");
 	$style_biilink = $bii_provider . '/globalbiilink.css';
+	$style_um = $bii_provider . '/um-style.css';
+	$style_mkpl = $bii_provider . '/mkpl-style.css';
 	$script_biilink = $bii_provider . '/globalbiilink.js';
 	$ddslick = $bii_provider . '/ddSlick.js';
 	$ui = $bii_provider . '/jqueryui.js';
@@ -11,6 +13,9 @@ function bii_enqueue_scripts() {
 
 	if (headersOK($style_biilink)) {
 		wp_enqueue_style('globalbiilink-css', $style_biilink);
+		if (in_array("bii_ultimatemember", $bodyclass)) {
+			wp_enqueue_style('globalbiilink-css-um', $style_um);
+		}
 	}
 	if (headersOK($script_biilink)) {
 		wp_enqueue_script('ddslick', $ddslick, array('jquery'));
@@ -23,6 +28,8 @@ function bii_enqueue_scripts() {
 		}else{
 			wp_enqueue_script('globalbiilink-js', $script_biilink, array('jquery', 'util'));
 		}
+		
+		
 	}
 }
 
