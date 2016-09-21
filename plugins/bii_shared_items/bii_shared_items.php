@@ -319,8 +319,9 @@ if (get_option("bii_use_shared_items") && get_option("bii_useclasses")) {
 /*
 	add_action("save_post", "bii_shared_items_save_post");
 	add_action("delete_post", "bii_shared_items_delete_post");
-
+*/
 	add_action("user_register", "bii_shared_items_add_user");
+	/*
 	add_action("delete_user", "bii_shared_items_remove_user");
 	add_action('profile_update', 'bii_shared_items_update_user', 10, 2);
 	add_action('updated_user_meta', 'bii_shared_items_update_user_meta', 10, 4);
