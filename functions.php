@@ -13,6 +13,7 @@ function bii_enqueue_scripts() {
 
 	if (headersOK($style_biilink)) {
 		wp_enqueue_style('globalbiilink-css', $style_biilink);
+		wp_enqueue_style('globalbiilink-css-mkpl', $style_mkpl);
 		if (in_array("bii_ultimatemember", $bodyclass)) {
 			wp_enqueue_style('globalbiilink-css-um', $style_um);
 		}
