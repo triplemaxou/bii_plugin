@@ -23,7 +23,7 @@ add_action("bii_informations", function() {
 });
 
 function bii_include_class_shared_items() {
-	set_time_limit (60) ;
+	set_time_limit(60);
 	$liste_class = [
 		"bii_shared_item",
 		"bii_shared_product",
@@ -220,7 +220,7 @@ function bii_shared_items_save_post($post_id) {
 	$lang = apply_filters("bii_multilingual_current_language", '');
 	$id_user = $post->post_author;
 	bii_user_post::addpost($id_user, $post_id);
-	
+
 
 	if ($type == "product") {
 		
@@ -299,8 +299,42 @@ function bii_shared_itemsreturn1() {
 	return 1;
 }
 
+function bii_shared_product_SC_lien_produit($attr = []) {
+	$lang = apply_filters("bii_multilingual_current_language", '');
+	$type = "products";
+	if (isset($attr['type'])) {
+		$type = $attr['type'];
+	}
+	$phrase = "See all $type";
+	if ($lang == "fr") {
+		$trad = $type;
+		if ($type == "products") {
+			$trad = "produits";
+		}
+		$phrase = "Voir tous les $trad";
+	}
+	$lien = bii_shared_product_lien_produit($lang, $type);
+	$href = '<a href="'.$lien.'">'.$phrase.'</a>';
+	return $href;
+}
+
+function bii_shared_product_lien_produit($lang, $type = "products") {
+	$baselink = bii_instance::get_market()->url();
+	$suitelien = "products";
+
+	if ($lang == "fr") {
+		$suitelien = "produits";
+	}
+	if ($type == "services") {
+		$suitelien = $type;
+	}
+
+	$instance = bii_instance::get_me();
 
 
+	$link = $baselink . '/' . $suitelien . '/#' . $instance->anchorname();
+	return $link;
+}
 
 function bii_shared_mod_query($query, $grid_id) {
 	bii_write_log("bii_eg_mod_query $grid_id");
@@ -334,7 +368,7 @@ function bii_shared_mod_query($query, $grid_id) {
 
 add_filter("bii_shared_items_my_instance_id", "bii_shared_itemsreturn1", 10);
 if (get_option("bii_use_shared_items") && get_option("bii_useclasses")) {
-	
+
 	add_action("bii_options_title", "bii_add_shared_items_option_title", 10);
 	add_action("bii_options", "bii_add_shared_items_options");
 	add_action("bii_dashboard_content", "bii_shared_items_dashboard_content");
@@ -348,19 +382,20 @@ if (get_option("bii_use_shared_items") && get_option("bii_useclasses")) {
 	add_action("bii_add_menu_pages", "bii_shared_items_menu");
 
 	add_shortcode("bii_galaxies", "bii_shared_items_SC_galaxies");
+	add_shortcode("bii_lien_produits", "bii_shared_product_SC_lien_produit");
 
 	add_filter('essgrid_get_posts', 'bii_shared_mod_query', 10, 2);
-	
+
 	add_action('bii_plugin_test_zone', 'bii_shared_items_test_zone');
-/*
-	add_action("save_post", "bii_shared_items_save_post");
-	add_action("delete_post", "bii_shared_items_delete_post");
-*/
+	/*
+	  add_action("save_post", "bii_shared_items_save_post");
+	  add_action("delete_post", "bii_shared_items_delete_post");
+	 */
 	add_action("user_register", "bii_shared_items_add_user");
 	/*
-	add_action("delete_user", "bii_shared_items_remove_user");
-	add_action('profile_update', 'bii_shared_items_update_user', 10, 2);
-	add_action('updated_user_meta', 'bii_shared_items_update_user_meta', 10, 4);
+	  add_action("delete_user", "bii_shared_items_remove_user");
+	  add_action('profile_update', 'bii_shared_items_update_user', 10, 2);
+	  add_action('updated_user_meta', 'bii_shared_items_update_user_meta', 10, 4);
 	 * 
 	 */
 }

@@ -51,6 +51,14 @@ class bii_instance extends bii_shared_item {
 		return $pass;
 	}
 
+	static function get_market(){
+		$items = static::all_items("is_market = 1");
+		if(is_array($items)){
+			return $items[0];
+		}
+		return null;
+	}
+	
 	static function get_me() {
 		$me = static::$myself;
 		if (!$me) {
@@ -212,6 +220,12 @@ class bii_instance extends bii_shared_item {
 		return $hash . $hex;
 	}
 
+	function anchorname(){
+		$name = $this->name();
+		$name = strtolower($name);
+		return $name;
+	}
+	
 	function shortcode_name() {
 		$name = $this->name();
 		if ($name == "Biilink") {
