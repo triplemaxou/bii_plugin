@@ -2,12 +2,12 @@
 /*
   Plugin Name: BiiDebug
   Description: Ajoute des fonctions de débug, invisibles pour le public
-  Version: 2.4.1
+  Version: 2.4.2
   Author: Biilink Agency
   Author URI: http://biilink.com/
   License: GPL2
  */
-define('bii_debug_version', '2.4.1');
+define('bii_debug_version', '2.4.2');
 
 define('BiiDebug_path', plugin_dir_path(__FILE__));
 define('bii_debug_path', plugin_dir_path(__FILE__));
@@ -152,7 +152,7 @@ add_action("bii_options", function() {
 }, 1);
 
 add_action("bii_options_submit", function() {
-	$tableaucheck = ["bii_medium_width", "bii_small_width", "bii_xsmall_width", "bii_xxsmall_width", "bii_bodyclass_list", "bii_provider"];
+	$tableaucheck = ["bii_medium_width", "bii_small_width", "bii_xsmall_width", "bii_xxsmall_width", "bii_bodyclass_list", "bii_provider","bii_ipallowed"];
 	foreach ($tableaucheck as $itemtocheck) {
 		if (isset($_POST[$itemtocheck])) {
 			update_option($itemtocheck, $_POST[$itemtocheck]);

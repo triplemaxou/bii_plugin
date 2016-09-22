@@ -2,13 +2,13 @@
 /*
   Plugin Name: Bii_shared_items
   Description: Gestion d'un système de compte unique à plusieurs wordpress
-  Version: 0.4
+  Version: 0.5
   Author: Biilink Agency
   Author URI: http://biilink.com/
   License: GPL2
  */
 
-define('bii_shared_items_version', '0.4');
+define('bii_shared_items_version', '0.5');
 define('bii_shared_items_path', plugin_dir_path(__FILE__));
 define('bii_shared_items_url', plugin_dir_url(__FILE__));
 
@@ -299,6 +299,39 @@ function bii_shared_itemsreturn1() {
 	return 1;
 }
 
+
+
+
+function bii_shared_mod_query($query, $grid_id) {
+	bii_write_log("bii_eg_mod_query $grid_id");
+
+	$catmodif = false;
+	if ($grid_id == 1) {
+		$cat_not_in = 32;
+		$catmodif = true;
+	}
+	if ($grid_id == 2) {
+		$cat_not_in = 31;
+		$catmodif = true;
+	}
+	if ($catmodif) {
+		$formertaxquery = $query["tax_query"][0];
+		$query["tax_query"] = array(
+			'relation' => 'AND',
+			$formertaxquery,
+			array(
+				'taxonomy' => 'product_cat',
+				'field' => 'id',
+				'terms' => array($cat_not_in),
+				'operator' => 'NOT IN',
+			),
+		);
+	}
+
+	bii_write_log($query);
+	return $query;
+}
+
 add_filter("bii_shared_items_my_instance_id", "bii_shared_itemsreturn1", 10);
 if (get_option("bii_use_shared_items") && get_option("bii_useclasses")) {
 	
@@ -316,6 +349,7 @@ if (get_option("bii_use_shared_items") && get_option("bii_useclasses")) {
 
 	add_shortcode("bii_galaxies", "bii_shared_items_SC_galaxies");
 
+	add_filter('essgrid_get_posts', 'bii_shared_mod_query', 10, 2);
 	
 	add_action('bii_plugin_test_zone', 'bii_shared_items_test_zone');
 /*
