@@ -7,7 +7,9 @@ class bii_ambassador extends bii_shared_item {
 	protected $logo;
 	protected $url;
 	
-	
+	static function nom_classe_admin(){
+		return "Ambassadeur";
+	}
 
 	function option_value() {
 		

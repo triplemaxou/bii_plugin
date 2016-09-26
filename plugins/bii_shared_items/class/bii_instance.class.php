@@ -22,6 +22,10 @@ class bii_instance extends bii_shared_item {
 	protected static $myid = 0;
 	protected static $myself = null;
 
+	static function nom_classe_admin(){
+		return "Instance";
+	}
+	
 	function get_bdd() {
 		$rpdo_host = $this->host_bdd;
 		$rpdo_name = $this->user_bdd;

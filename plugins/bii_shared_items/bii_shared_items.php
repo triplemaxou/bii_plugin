@@ -161,6 +161,7 @@ function bii_shared_items_menu() {
 		bii_ambassador::displaySousMenu();
 		bii_instance::displaySousMenu();
 		bii_changelog::displaySousMenu();
+		bii_shared_shortcode::displaySousMenu();
 	}
 }
 
@@ -368,6 +369,10 @@ function bii_shared_mod_query($query, $grid_id) {
 	return $query;
 }
 
+function bii_shortcodeexplained(){
+	bii_shared_shortcode::explained_shortcodes();
+}
+
 add_filter("bii_shared_items_my_instance_id", "bii_shared_itemsreturn1", 10);
 if (get_option("bii_use_shared_items") && get_option("bii_useclasses")) {
 
@@ -380,6 +385,8 @@ if (get_option("bii_use_shared_items") && get_option("bii_useclasses")) {
 	remove_filter("bii_shared_items_my_instance_id", "bii_shared_itemsreturn1");
 	add_filter("bii_shared_items_my_instance", "bii_shared_items_my_instance", 10);
 	add_filter("bii_shared_items_my_instance_id", "bii_shared_items_my_instance_id", 10);
+	
+	add_action("bii_specific_shortcodes", "bii_shortcodeexplained");
 
 	add_action("bii_add_menu_pages", "bii_shared_items_menu");
 
