@@ -34,6 +34,7 @@ function bii_include_class_shared_items() {
 		"bii_user_post",
 		"bii_ambassador",
 		"bii_changelog",
+		"bii_shared_shortcode",
 	];
 //	bii_write_log($liste_class);
 	foreach ($liste_class as $class) {
@@ -45,6 +46,7 @@ function bii_include_class_shared_items() {
 			}
 		}
 	}
+	bii_shared_shortcode::add_shortcodes();
 	require_once( ABSPATH . WPINC . '/pluggable.php' );
 //	bii_shared_items_my_instance();
 //	bii_shared_product::checklangs();
