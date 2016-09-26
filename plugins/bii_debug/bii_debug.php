@@ -2,12 +2,12 @@
 /*
   Plugin Name: BiiDebug
   Description: Ajoute des fonctions de débug, invisibles pour le public
-  Version: 2.4.2
+  Version: 2.5.0
   Author: Biilink Agency
   Author URI: http://biilink.com/
   License: GPL2
  */
-define('bii_debug_version', '2.4.2');
+define('bii_debug_version', '2.5.0');
 
 define('BiiDebug_path', plugin_dir_path(__FILE__));
 define('bii_debug_path', plugin_dir_path(__FILE__));
@@ -136,6 +136,8 @@ add_action("bii_options", function() {
 		bii_makestuffbox("bii_ipallowed", "Adresse IP de débug", "text", "col-xxs-12 col-sm-6 col-md-3");
 		bii_makestuffbox("bii_bodyclass_list", "Liste des classes de body possibles (séparer par des virgules)", "text", "col-xxs-12 col-sm-6 col-md-6");
 		bii_makestuffbox("bii_provider", "Bii provider", "text", "col-xxs-12 col-sm-6 col-md-3");
+		
+		bii_makestuffbox("bii_analytics_tracking_code", "Code tracking analytics", "textarea", "col-xxs-12");
 		?>
 	</div>
 	<div class="col-xxs-12 pl-Shortcodes bii_option hidden">
@@ -152,7 +154,7 @@ add_action("bii_options", function() {
 }, 1);
 
 add_action("bii_options_submit", function() {
-	$tableaucheck = ["bii_medium_width", "bii_small_width", "bii_xsmall_width", "bii_xxsmall_width", "bii_bodyclass_list", "bii_provider","bii_ipallowed"];
+	$tableaucheck = ["bii_medium_width", "bii_small_width", "bii_xsmall_width", "bii_xxsmall_width", "bii_bodyclass_list", "bii_provider","bii_ipallowed","bii_analytics_tracking_code"];
 	foreach ($tableaucheck as $itemtocheck) {
 		if (isset($_POST[$itemtocheck])) {
 			update_option($itemtocheck, $_POST[$itemtocheck]);
@@ -165,6 +167,12 @@ if (bii_canshow_debug()) {
 		<li role="presentation" class="hide-relative hide-publier" data-relative="pl-zdt"><i class="fa fa-wrench"></i> Zone de test</li>
 		<?php
 	}, 99);
+}
+
+
+add_action("bii_analytics_tracking_code","bii_analytics_tracking_code");
+function bii_analytics_tracking(){
+	echo get_option("bii_analytics_tracking_code");
 }
 
 function bii_custombodyclasses_metaboxes() {
