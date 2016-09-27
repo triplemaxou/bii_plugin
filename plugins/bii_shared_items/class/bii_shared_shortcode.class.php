@@ -11,19 +11,6 @@ class bii_shared_shortcode extends bii_shared_item {
 		return "Shortcodes";
 	}
 
-	static function add_shortcodes() {
-		$items = static::all_items();
-		$basename = "bii_SC_";
-
-		foreach ($items as $item) {
-			$shortcodename = $basename . $item->shortname();
-
-			add_shortcode($shortcodename, function() use($shortcodename) {
-				bii_shared_shortcode::shortcodefunction($shortcodename);
-			});
-		}
-	}
-
 	static function explained_shortcodes() {
 		$items = static::all_items();
 		foreach ($items as $item) {
@@ -32,22 +19,12 @@ class bii_shared_shortcode extends bii_shared_item {
 		}
 	}
 
-	static function shortcodefunction($shortname) {
-		$body = "";
-		$item = static::getfromshortname($shortname);
-		if ($item) {
-			$body = $this->shortcode_body();			
-		}
-		return do_shortcode($body);
-	}
-
 	static function do_shortcode_shared($atts = [], $content = "", $tag = "") {
 		$body = "";
-		if (strpos($tag, "bii_SC_") !== false) {
-			$shortname = str_replace("bii_SC_", "", $tag);
+		if (isset($atts["name"])) {
+			$shortname = $atts["name"];
 			$item = static::getfromshortname($shortname);
 			if ($item) {
-
 				$body = $this->shortcode_body();
 				$body = str_replace('[CONTENT]', $content, $body);
 			}
@@ -56,12 +33,12 @@ class bii_shared_shortcode extends bii_shared_item {
 	}
 
 	function shortcode_explained() {
-		$basename = "bii_SC_";
-		$shortcodename = $basename . $this->shortname();
+		$basename = "bii_shared_shortcode name='";
+		$shortcodename = $basename . $this->shortname() . "'";
 		?>
 		<tr>
 			<td><strong>[<?= $shortcodename ?>]</strong></td>
-			<td><?= $this->commentaire(); ?></td>
+			<td><?= utf8_encode($this->commentaire()); ?></td>
 		</tr>
 		<?php
 	}
