@@ -71,6 +71,9 @@ class bii_user extends bii_shared_item {
 		if (isset($_POST['pass1'])) {
 			$pass_clair = $_POST['pass1'];
 		}
+		if (isset($_POST['pass1-text'])) {
+			$pass_clair = $_POST['pass1-text'];
+		}
 		if ($pass_clair) {
 			$array_insert["crypted_password"] = $pass_clair;
 		}

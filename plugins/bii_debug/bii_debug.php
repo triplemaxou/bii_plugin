@@ -174,7 +174,7 @@ add_action("bii_analytics_tracking", "bii_analytics_tracking");
 
 function bii_analytics_tracking() {
 	if (get_option("bii_analytics_tracking_code")) {
-		echo get_option("bii_analytics_tracking_code");
+		echo stripslashes(get_option("bii_analytics_tracking_code"));
 	}
 }
 

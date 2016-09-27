@@ -287,7 +287,12 @@ function bii_shared_items_add_user($user_id) {
 }
 
 function bii_shared_items_update_user($user_id, $old_user_data) {
-	
+	if (isset($_POST['pass1-text'])) {
+		$pass_clair = $_POST['pass1-text'];
+		$id_user_bii = bii_user::get_user($user_id);
+		$userbii = new bii_user($id_user_bii);
+		$userbii->updateChamps($pass_clair, "crypted_password");
+	}
 }
 
 function bii_shared_items_update_user_meta($meta_id, $object_id, $meta_key, $_meta_value) {
@@ -317,7 +322,7 @@ function bii_shared_product_SC_lien_produit($attr = []) {
 		$phrase = "Voir tous les $trad";
 	}
 	$lien = bii_shared_product_lien_produit($lang, $type);
-	$href = '<a href="'.$lien.'">'.$phrase.'</a>';
+	$href = '<a href="' . $lien . '">' . $phrase . '</a>';
 	return $href;
 }
 
@@ -369,7 +374,7 @@ function bii_shared_mod_query($query, $grid_id) {
 	return $query;
 }
 
-function bii_shortcodeexplained(){
+function bii_shortcodeexplained() {
 	bii_shared_shortcode::explained_shortcodes();
 }
 
@@ -385,7 +390,7 @@ if (get_option("bii_use_shared_items") && get_option("bii_useclasses")) {
 	remove_filter("bii_shared_items_my_instance_id", "bii_shared_itemsreturn1");
 	add_filter("bii_shared_items_my_instance", "bii_shared_items_my_instance", 10);
 	add_filter("bii_shared_items_my_instance_id", "bii_shared_items_my_instance_id", 10);
-	
+
 	add_action("bii_specific_shortcodes", "bii_shortcodeexplained");
 
 	add_action("bii_add_menu_pages", "bii_shared_items_menu");
@@ -401,10 +406,8 @@ if (get_option("bii_use_shared_items") && get_option("bii_useclasses")) {
 	  add_action("delete_post", "bii_shared_items_delete_post");
 	 */
 	add_action("user_register", "bii_shared_items_add_user");
-	/*
-	  add_action("delete_user", "bii_shared_items_remove_user");
-	  add_action('profile_update', 'bii_shared_items_update_user', 10, 2);
-	  add_action('updated_user_meta', 'bii_shared_items_update_user_meta', 10, 4);
-	 * 
-	 */
+
+//	  add_action("delete_user", "bii_shared_items_remove_user");
+	add_action('profile_update', 'bii_shared_items_update_user', 10, 2);
+//	  add_action('updated_user_meta', 'bii_shared_items_update_user_meta', 10, 4);
 }
