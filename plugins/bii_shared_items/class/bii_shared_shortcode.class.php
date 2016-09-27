@@ -21,14 +21,31 @@ class bii_shared_shortcode extends bii_shared_item {
 
 	static function do_shortcode_shared($atts = [], $content = "", $tag = "") {
 		$body = "";
+
 		if (isset($atts["name"])) {
+			$instance = bii_instance::get_me();
+
 			$shortname = $atts["name"];
 //			pre($shortname);
 			$item = static::getfromshortname($shortname);
 			if ($item) {
 				$body = $item->shortcode_body();
-				
+
 				$body = str_replace('[CONTENT]', $content, $body);
+
+				$percent = 1;
+				if (isset($atts["percentcolor"])) {
+					$percent = $atts["percentcolor"];
+				}
+				if (strpos($body, '|bii-mycolor|') != false) {
+					$body = str_replace('|bii-mycolor|', $instance->color($percent), $body);
+				}
+				if (strpos($body, '|bii-myshortname|')!= false) {
+					$body = str_replace('|bii-myshortname|', $instance->anchorname(), $body);
+				}
+				if (strpos($body, '|bii-mybiiname|')!= false) {
+					$body = str_replace('|bii-mybiiname|', $instance->shortcode_name(), $body);
+				}
 			}
 		}
 //		pre($body);

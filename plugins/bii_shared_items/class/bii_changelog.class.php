@@ -29,6 +29,9 @@ class bii_changelog extends bii_shared_item {
 		return $array;
 	}
 	
+	static function nom_classe_admin() {
+		return "Changelog";
+	}
 	
 	public function display() {
 		$version = $this->version();
