@@ -23,12 +23,15 @@ class bii_shared_shortcode extends bii_shared_item {
 		$body = "";
 		if (isset($atts["name"])) {
 			$shortname = $atts["name"];
+//			pre($shortname);
 			$item = static::getfromshortname($shortname);
 			if ($item) {
-				$body = $this->shortcode_body();
+				$body = $item->shortcode_body();
+				
 				$body = str_replace('[CONTENT]', $content, $body);
 			}
 		}
+//		pre($body);
 		return do_shortcode($body);
 	}
 

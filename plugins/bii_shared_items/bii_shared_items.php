@@ -379,7 +379,9 @@ function bii_shortcodeexplained() {
 }
 
 function bii_shared_shortcode_function($atts = [],$content="",$tag=''){
-	bii_shared_shortcode::do_shortcode_shared($atts, $content, $tag);
+	$string = bii_shared_shortcode::do_shortcode_shared($atts, $content, $tag);
+//	pre($string);
+	return $string;
 }
 
 add_filter("bii_shared_items_my_instance_id", "bii_shared_itemsreturn1", 10);
