@@ -26,6 +26,20 @@ class bii_instance extends bii_shared_item {
 		return "Instance";
 	}
 	
+	static function getListeProprietes(){
+		$array = array(
+			"id" => "id",
+			"name" => __("name"),
+//			"categories" => __("categories"),
+			"color" => __("color"),
+			"version_bii" => __("version"),
+			"url_import" => __("URL insertion"),
+			"password_import" => __("MDP insertion"),
+			"date_insert" => __("date d'ajout"),
+		);
+		return $array;
+	}
+	
 	function get_bdd() {
 		$rpdo_host = $this->host_bdd;
 		$rpdo_name = $this->user_bdd;

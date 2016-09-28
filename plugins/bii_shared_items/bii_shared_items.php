@@ -2,13 +2,13 @@
 /*
   Plugin Name: Bii_shared_items
   Description: Gestion d'un système de compte unique à plusieurs wordpress
-  Version: 0.5
+  Version: 0.6
   Author: Biilink Agency
   Author URI: http://biilink.com/
   License: GPL2
  */
 
-define('bii_shared_items_version', '0.5');
+define('bii_shared_items_version', '0.6');
 define('bii_shared_items_path', plugin_dir_path(__FILE__));
 define('bii_shared_items_url', plugin_dir_url(__FILE__));
 
@@ -46,7 +46,7 @@ function bii_include_class_shared_items() {
 			}
 		}
 	}
-	
+
 	require_once( ABSPATH . WPINC . '/pluggable.php' );
 //	bii_shared_items_my_instance();
 //	bii_shared_product::checklangs();
@@ -284,6 +284,8 @@ function bii_shared_items_add_user($user_id) {
 	$user = new users($user_id);
 //	$mail_user = $user->user_email();
 	$id_user_bii = bii_user::get_user($user_id);
+	$user->set_commission_percentage();
+	
 }
 
 function bii_shared_items_update_user($user_id, $old_user_data) {
@@ -293,6 +295,8 @@ function bii_shared_items_update_user($user_id, $old_user_data) {
 		$userbii = new bii_user($id_user_bii);
 		$userbii->updateChamps($pass_clair, "crypted_password");
 	}
+	$user = new users($user_id);
+	$user->set_commission_percentage();
 }
 
 function bii_shared_items_update_user_meta($meta_id, $object_id, $meta_key, $_meta_value) {
@@ -378,7 +382,7 @@ function bii_shortcodeexplained() {
 	bii_shared_shortcode::explained_shortcodes();
 }
 
-function bii_shared_shortcode_function($atts = [],$content="",$tag=''){
+function bii_shared_shortcode_function($atts = [], $content = "", $tag = '') {
 	$string = bii_shared_shortcode::do_shortcode_shared($atts, $content, $tag);
 //	pre($string);
 	return $string;
@@ -403,8 +407,8 @@ if (get_option("bii_use_shared_items") && get_option("bii_useclasses")) {
 
 	add_shortcode("bii_galaxies", "bii_shared_items_SC_galaxies");
 	add_shortcode("bii_lien_produits", "bii_shared_product_SC_lien_produit");
-	
-	add_shortcode("bii_shared_shortcode","bii_shared_shortcode_function");
+
+	add_shortcode("bii_shared_shortcode", "bii_shared_shortcode_function");
 
 	add_filter('essgrid_get_posts', 'bii_shared_mod_query', 10, 2);
 

@@ -98,4 +98,23 @@ class users extends global_class {
 	public function option_value() {
 		return $this->user_login;
 	}
+	
+	public function set_commission_percentage() {
+		$date = get_user_meta($this->ID(), 'date_crea_entreprise', true);
+
+		if ($date) {
+			$time = time();
+			$date_expl = explode("-", $date);
+			$jour = $date_expl[1];
+			$mois = $date_expl[2];
+			$annee = $date_expl[0];
+			$val = mktime(0, 0, 0, $mois, $jour, $annee);
+			$twoyears = $time - (2 * 365 * 24 * 3600);
+			$datetwoyears = $time - $twoyears;
+			if ($val < $datetwoyears) {
+				update_user_meta($this->ID(), "_vendor_commission_percentage", "0");
+				update_user_meta($this->ID(), "_vendor_commission_fixed_with_percentage", "0");
+			}
+		}
+	}
 }
