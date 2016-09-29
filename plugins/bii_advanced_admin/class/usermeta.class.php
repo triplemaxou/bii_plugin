@@ -7,6 +7,23 @@ class usermeta extends global_class {
 	protected $meta_key;
 	protected $meta_value;
 
+	public static function nom_classe_bdd() {		
+		if(defined('CUSTOM_USER_META_TABLE')){
+			$nom_class = CUSTOM_USER_META_TABLE;
+		}else{
+			$nom_class = parent::nom_classe_bdd();
+		}
+		return $nom_class;
+	}
+	public static function prefix_bdd() {
+		if (defined('CUSTOM_USER_META_TABLE')) {
+			$prefix = "";
+		} else {
+			$prefix = parent::prefix_bdd();
+		}
+		return $prefix;
+	}
+	
 	public static function identifiant() {
 		return "umeta_id";
 	}
@@ -47,13 +64,19 @@ class usermeta extends global_class {
 	}
 
 	public static function exists($user_id, $value) {
+		if(is_a($value, 'usermeta')){
+			$value = $value->meta_value();
+		}
 
 		$bool = (bool) static::nb("user_id = '$user_id' AND meta_value = '$value'");
 		return $bool;
 	}
 
+	
+	
 	public static function from_id_key($user_id, $key) {
-		$liste = static::all_id("user_id = '$user_id' AND meta_key = '$key'");
+		$liste = static::all_items("user_id = '$user_id' AND meta_key = '$key'");
+//		pre("user_id = '$user_id' AND meta_key = '$key'");
 		return $liste[0];
 	}
 

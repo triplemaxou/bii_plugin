@@ -26,6 +26,24 @@ class bii_instance extends bii_shared_item {
 		return "Instance";
 	}
 	
+	static function get_all_prefixes($not_in = ""){		
+		$pdo = static::getPDO();
+		$class_name = static::prefix_bdd() . static::nom_classe_bdd();
+		$req = "select distinct prefix_bdd from " . $class_name;		
+		if($not_in){
+			$req.= " WHERE prefix_bdd NOT IN ($not_in)";
+		}
+		$select = $pdo->query($req);
+		$liste = array();
+		bii_write_log($req);
+		pre($req,"red");
+		while ($row = $select->fetch()) {
+			$liste[] = $row["prefix_bdd"];
+		}
+		$pdo = null;
+		return $liste;	
+	}
+	
 	static function getListeProprietes(){
 		$array = array(
 			"id" => "id",

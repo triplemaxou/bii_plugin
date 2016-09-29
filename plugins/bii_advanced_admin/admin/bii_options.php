@@ -8,7 +8,7 @@
 	<div class="titre ">
 		<?= apply_filters('bii_options_page_title', 0, 0); ?>
 	</div>
-	<div class="col-xxs-12 col-md-10">
+	<div class="col-xxs-12 col-xs-12">
 		<div class="col-xxs-12">
 			<div class="meta-box-holder">
 				<ul class="nav nav-tabs bii-option-title">

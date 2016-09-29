@@ -13,6 +13,24 @@ class users extends global_class {
 	protected $user_status;
 	protected $display_name;
 
+	public static function nom_classe_bdd() {
+		if (defined('CUSTOM_USER_TABLE')) {
+			$nom_class = CUSTOM_USER_TABLE;
+		} else {
+			$nom_class = parent::nom_classe_bdd();
+		}
+		return $nom_class;
+	}
+	
+	public static function prefix_bdd() {
+		if (defined('CUSTOM_USER_TABLE')) {
+			$prefix = "";
+		} else {
+			$prefix = parent::prefix_bdd();
+		}
+		return $prefix;
+	}
+
 	public function user_email() {
 		return $this->user_email;
 	}
@@ -21,9 +39,13 @@ class users extends global_class {
 		return "ID";
 	}
 
+	function get_meta($key) {
+		return usermeta::from_id_key($this->id(), $key);
+	}
+
 	public function get_rsItems() {
 		$liste = usermeta::multiple_from_id_key($this->id(), "requete_sauvegardee");
-		pre($liste,'red');
+		pre($liste, 'red');
 		$listeRS = [];
 		if ((bool) $liste) {
 			foreach ($liste as $id) {
@@ -61,7 +83,7 @@ class users extends global_class {
 		foreach ($rs_list as $rsItem) {
 			$liste_biens = array_merge($liste_biens, $rsItem->liste_biens());
 		}
-		
+
 		return $liste_biens;
 	}
 
@@ -76,21 +98,21 @@ class users extends global_class {
 
 	public function sendmail() {
 		$liste = $this->getBiensSearched();
-		
+
 		if (count($liste)) {
 			$to_email = $this->user_email;
 			$from_email = "contact@lemaistre-immo.com";
 			$email_subject = "Votre alerte mail sur " . get_bloginfo("name");
 
 
-			$email_body = annonce::mailFromListe($liste,10);
+			$email_body = annonce::mailFromListe($liste, 10);
 
 			$header = 'Content-type: text/html; charset=utf-8' . "\r\n";
 
 			$header .= 'From: ' . get_bloginfo("name") . " <" . $from_email . "> \r\n";
 
 //			wp_mail($to_email, $email_subject, $email_body, $header);
-			pre($to_email,"red");
+			pre($to_email, "red");
 			debugEcho($email_body);
 		}
 	}
@@ -98,7 +120,7 @@ class users extends global_class {
 	public function option_value() {
 		return $this->user_login;
 	}
-	
+
 	public function set_commission_percentage() {
 		$date = get_user_meta($this->ID(), 'date_crea_entreprise', true);
 
@@ -117,4 +139,31 @@ class users extends global_class {
 			}
 		}
 	}
+
+	public function add_rights_to_others_sites() {
+		if (get_option("bii_use_shared_items")) {
+			$prefix = "wp_biimarket_";
+			$prefixes = bii_instance::get_all_prefixes("'$prefix'");
+			$capabilities = $prefix . "capabilities";
+			$user_level = $prefix . "user_level";
+			$cap = get_user_meta($this->ID(),$capabilities,true);
+			$level = get_user_meta($this->ID(),$user_level,true);
+			foreach ($prefixes as $prefix) {
+				$capabilities = $prefix . "capabilities";
+				$user_level = $prefix . "user_level";
+				update_user_meta($this->id(), $capabilities, $cap);
+				update_user_meta($this->id(), $user_level, $level);
+			}
+		}
+	}
+	
+	public static function synchro_rights(){
+		$users = static::all_items();
+		foreach($users as $user){
+			$user->add_rights_to_others_sites();
+		}
+	}
+	
+	
+
 }
