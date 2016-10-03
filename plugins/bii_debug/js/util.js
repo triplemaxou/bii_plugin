@@ -21,7 +21,10 @@ function bii_CL_error(value) {
 function zoneFenetre() {
 	var ytop = jQuery(window).scrollTop() * 1;
 	var ybottom = jQuery(window).height() * 1 + ytop + zonebottomplus;
-	var ret = {'ytop': ytop, 'ybottom': ybottom};
+	var left = jQuery(window).scrollLeft() * 1;
+	var right = left + jQuery(window).width() ;
+	
+	var ret = {'ytop': ytop, 'ybottom': ybottom,'left':left,'right':right};
 //	console.log(ret);
 	return ret;
 }

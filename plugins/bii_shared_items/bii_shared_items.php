@@ -259,7 +259,7 @@ function bii_shared_items_delete_post($post_id) {
 function bii_shared_items_test_zone() {
 //	bii_user::synchronize_all();
 //	pre(bii_instance::get_all_prefixes("'wp_biimarket_'"));
-//	users::synchro_rights();
+	users::synchro_rights();
 }
 
 function bii_shared_items_dashboard_content() {

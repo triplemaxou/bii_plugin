@@ -36,7 +36,7 @@ class bii_instance extends bii_shared_item {
 		$select = $pdo->query($req);
 		$liste = array();
 		bii_write_log($req);
-		pre($req,"red");
+//		pre($req,"red");
 		while ($row = $select->fetch()) {
 			$liste[] = $row["prefix_bdd"];
 		}

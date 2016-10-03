@@ -21,7 +21,7 @@ class users extends global_class {
 		}
 		return $nom_class;
 	}
-	
+
 	public static function prefix_bdd() {
 		if (defined('CUSTOM_USER_TABLE')) {
 			$prefix = "";
@@ -143,27 +143,27 @@ class users extends global_class {
 	public function add_rights_to_others_sites() {
 		if (get_option("bii_use_shared_items")) {
 			$prefix = "wp_biimarket_";
-			$prefixes = bii_instance::get_all_prefixes("'$prefix'");
-			$capabilities = $prefix . "capabilities";
-			$user_level = $prefix . "user_level";
-			$cap = get_user_meta($this->ID(),$capabilities,true);
-			$level = get_user_meta($this->ID(),$user_level,true);
+			$prefixes = bii_instance::get_all_prefixes();
+			$cap = ["subscriber"];
+			$level = 0;
 			foreach ($prefixes as $prefix) {
 				$capabilities = $prefix . "capabilities";
 				$user_level = $prefix . "user_level";
-				update_user_meta($this->id(), $capabilities, $cap);
-				update_user_meta($this->id(), $user_level, $level);
+				$level = get_user_meta($this->ID(), $user_level, true);
+				if (!$level) {
+					pre($cap);
+					update_user_meta($this->id(), $capabilities, $cap);
+					update_user_meta($this->id(), $user_level, $level);
+				}
 			}
 		}
 	}
-	
-	public static function synchro_rights(){
+
+	public static function synchro_rights() {
 		$users = static::all_items();
-		foreach($users as $user){
+		foreach ($users as $user) {
 			$user->add_rights_to_others_sites();
 		}
 	}
-	
-	
 
 }

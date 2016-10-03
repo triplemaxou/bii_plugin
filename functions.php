@@ -2,12 +2,12 @@
 
 function bii_enqueue_scripts() {
 	$bii_provider = get_option("bii_provider");
-	$style_biilink = $bii_provider . '/globalbiilink.css';
-	$style_um = $bii_provider . '/um-style.css';
-	$style_mkpl = $bii_provider . '/mkpl-style.css';
-	$script_biilink = $bii_provider . '/globalbiilink.js';
-	$ddslick = $bii_provider . '/ddSlick.js';
-	$ui = $bii_provider . '/jqueryui.js';
+	$style_biilink = $bii_provider . 'globalbiilink.css';
+	$style_um = $bii_provider . 'um-style.css';
+	$style_mkpl = $bii_provider . 'mkpl-style.css';
+	$script_biilink = $bii_provider . 'globalbiilink.js';
+	$ddslick = $bii_provider . 'ddSlick.js';
+	$ui = $bii_provider . 'jqueryui.js';
 	$bodyclass = apply_filters("body_class", "");
 	
 
