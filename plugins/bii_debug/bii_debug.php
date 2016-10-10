@@ -2,12 +2,12 @@
 /*
   Plugin Name: BiiDebug
   Description: Ajoute des fonctions de débug, invisibles pour le public
-  Version: 2.5.2
+  Version: 2.7
   Author: Biilink Agency
   Author URI: http://biilink.com/
   License: GPL2
  */
-define('bii_debug_version', '2.5.2');
+define('bii_debug_version', '2.7');
 
 define('BiiDebug_path', plugin_dir_path(__FILE__));
 define('bii_debug_path', plugin_dir_path(__FILE__));
@@ -122,9 +122,7 @@ add_action("bii_options", function() {
 	?>
 	<div class="col-xxs-12 pl-Informations bii_option">
 		<table>
-
 			<?php do_action("bii_informations"); ?>			
-
 		</table>
 	</div>
 	<div class="col-xxs-12 pl-Biidebug bii_option hidden">
@@ -139,6 +137,7 @@ add_action("bii_options", function() {
 
 		bii_makestuffbox("bii_analytics_tracking_code", "Code tracking analytics", "textarea", "col-xxs-12");
 		?>
+		<?php do_action("bii_options_debug"); ?>		
 	</div>
 	<div class="col-xxs-12 pl-Shortcodes bii_option hidden">
 		<div class="col-xxs-12">
@@ -152,9 +151,26 @@ add_action("bii_options", function() {
 	</div>
 	<?php
 }, 1);
+add_filter("bii_options_debug_tableau_check", "bii_options_debug_tableau_check");
+
+function bii_options_debug_tableau_check($toadd = []) {
+	$tableaucheck = ["bii_medium_width", "bii_small_width", "bii_xsmall_width", "bii_xxsmall_width", "bii_bodyclass_list", "bii_provider", "bii_ipallowed", "bii_analytics_tracking_code"];
+	$toadd2 = apply_filters("bii_options_debug_tableau_check_more","");
+	if (count($toadd)) {
+		$tableaucheck = array_merge($tableaucheck, $toadd);
+	}
+	if (count($toadd2)) {
+		$tableaucheck = array_merge($tableaucheck, $toadd2);
+	}
+	return $tableaucheck;
+}
+
+add_filter("bii_options_debug_tableau_check_more", function($v = "") {
+	return [];
+});
 
 add_action("bii_options_submit", function() {
-	$tableaucheck = ["bii_medium_width", "bii_small_width", "bii_xsmall_width", "bii_xxsmall_width", "bii_bodyclass_list", "bii_provider", "bii_ipallowed", "bii_analytics_tracking_code"];
+	$tableaucheck = apply_filters("bii_options_debug_tableau_check", []);
 	foreach ($tableaucheck as $itemtocheck) {
 		if (isset($_POST[$itemtocheck])) {
 			update_option($itemtocheck, $_POST[$itemtocheck]);
@@ -221,7 +237,7 @@ function bii_MB_custombodyclasses($post) {
 
 				var id = jQuery(this).attr("data-change");
 
-		//				console.log(id);
+				//				console.log(id);
 				var checked = jQuery(this).is(":checked");
 				var value = 0;
 				if (checked == true) {
@@ -229,7 +245,7 @@ function bii_MB_custombodyclasses($post) {
 
 				}
 				jQuery("#" + id).val(value);
-		//				console.log(jQuery("#" + id));
+				//				console.log(jQuery("#" + id));
 			});
 		</script>
 		<?php
@@ -266,3 +282,46 @@ if (get_option("bii_bodyclass_list")) {
 	add_action('save_post', 'bii_bodyclass_list_save_metaboxes');
 	add_filter('body_class', 'bii_bodyclass_add_class', 10, 2);
 }
+
+function bii_debug_get_image_sizes() {
+	global $_wp_additional_image_sizes;
+
+	$sizes = array();
+
+	foreach (get_intermediate_image_sizes() as $_size) {
+		if (in_array($_size, array('thumbnail', 'medium', 'medium_large', 'large'))) {
+			$sizes[$_size]['width'] = get_option("{$_size}_size_w");
+			$sizes[$_size]['height'] = get_option("{$_size}_size_h");
+			$sizes[$_size]['crop'] = (bool) get_option("{$_size}_crop");
+		} elseif (isset($_wp_additional_image_sizes[$_size])) {
+			$sizes[$_size] = array(
+				'width' => $_wp_additional_image_sizes[$_size]['width'],
+				'height' => $_wp_additional_image_sizes[$_size]['height'],
+				'crop' => $_wp_additional_image_sizes[$_size]['crop'],
+			);
+		}
+	}
+
+	return $sizes;
+}
+
+function bii_debug_test_zone() {
+//	pre(bii_debug_get_image_sizes());
+}
+
+add_action('bii_plugin_test_zone', 'bii_debug_test_zone');
+
+function bii_debug_reduce_weight_thumnail_massive($return, $method) {
+	$return = str_replace("style=", "style='background-image: url(" . Bii_url . "img/loader250x250.gif);' data-style=", $return);
+	global $post;
+	$thumbnailsrc = wp_get_attachment_image_src(get_post_meta($post->ID, '_thumbnail_id', true), "shop_catalog");
+//	pre($thumbnailsrc);
+	$formersrc = wp_get_attachment_url(get_post_meta($post->ID, '_thumbnail_id', true));
+	$return = str_replace($formersrc, $thumbnailsrc[0], $return);
+//	pre($formersrc);
+
+
+	return $return;
+}
+
+add_filter("ma/product/build/thumbnail", "bii_debug_reduce_weight_thumnail_massive");

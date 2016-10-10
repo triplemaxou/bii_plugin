@@ -2,12 +2,12 @@
 /*
   Plugin Name: Bii_css
   Description: Ajoute bootstrap et font awesome sur le site et son back office
-  Version: 1.5
+  Version: 1.6
   Author: Biilink Agency
   Author URI: http://biilink.com/
   License: GPL2
  */
-define('bii_css_version', '1.5');
+define('bii_css_version', '1.6');
 define('bii_css_path', plugin_dir_path(__FILE__));
 define('bii_css_url', plugin_dir_url(__FILE__));
 
@@ -64,7 +64,7 @@ function bii_css_info() {
 		<?php } ?>		
 		<tr><td>Le flyout est </td><td><?= bii_makebutton("bii_flyout"); ?></td></tr>
 		<tr><td>Bootstrap Admin est  </td><td><?= bii_makebutton("bii_usebootstrap_admin"); ?></td></tr>
-		<!--<tr><td>Bootstrap Admin JS est  </td><td><?php // bii_makebutton("bii_usebootstrap_admin_js");                                  ?></td></tr>-->
+		<!--<tr><td>Bootstrap Admin JS est  </td><td><?php // bii_makebutton("bii_usebootstrap_admin_js");                                   ?></td></tr>-->
 		<tr><td>Font Awesome Admin est  </td><td><?= bii_makebutton("bii_fa_admin"); ?></td></tr>
 		<tr title='Activer cette option peut "casser le site"'>
 			<td><i class="fa fa-exclamation-triangle"></i> Bootstrap Front est  </td><td><?= bii_makebutton("bii_usebootstrap_front"); ?></td>
@@ -864,7 +864,9 @@ function bii_css_lazyload_logoos($atts, $content = null) {
 
 			// if has post thumbnail		
 			if (has_post_thumbnail($post[$i]->ID)) {
-				$thumbnailsrc = wp_get_attachment_url(get_post_meta($post[$i]->ID, '_thumbnail_id', true));
+//				pre(get_intermediate_image_sizes());
+//				$thumbnailsrc = wp_get_attachment_image(get_post_meta($post[$i]->ID, '_thumbnail_id', true));
+				$thumbnailsrc = wp_get_attachment_image(get_post_meta($post[$i]->ID, '_thumbnail_id', true), "clients-slider");
 			}
 
 			if (get_post_meta($post[$i]->ID, 'link_target', true) != '') {

@@ -2,12 +2,12 @@
 /*
   Plugin Name: Bii Advanced Admin
   Description: Ajoute des fonctionnalités dans l'interface d'admin
-  Version: 2.1.1
+  Version: 2.2
   Author: Biilink Agency
   Author URI: http://biilink.com/
   License: GPL2
  */
-define('bii_advanced_admin_version', '2.1.1');
+define('bii_advanced_admin_version', '2.2');
 define('bii_advanced_admin_path', plugin_dir_path(__FILE__));
 define('bii_advanced_admin_url', plugin_dir_url(__FILE__));
 
@@ -26,8 +26,6 @@ function bii_add_admin_pages() {
 	}
 }
 
-add_action('admin_menu', 'bii_add_admin_pages');
-
 function bii_enqueueJSAdmin($hook) {
 	wp_enqueue_media();
 	wp_enqueue_script('media-upload');
@@ -39,7 +37,10 @@ function bii_enqueueJSAdmin($hook) {
 	wp_enqueue_script('bii_advanced-admin', plugins_url('js/admin.js', __FILE__), array('jquery'), false, true);
 }
 
-add_action('admin_enqueue_scripts', 'bii_enqueueJSAdmin');
+function bii_delete_not_approved() {
+	include("ajax/ajax_delete_not_approved.php");
+	die();
+}
 
 function bii_get_post_ajax() {
 	include("ajax/getPost.php");
@@ -50,9 +51,6 @@ function bii_ajax_changewpoption() {
 	include("ajax/ajax_change_wp_option.php");
 	die();
 }
-
-add_action('wp_ajax_bii_get_post', 'bii_get_post_ajax');
-add_action('wp_ajax_bii_change_wp_option', 'bii_ajax_changewpoption');
 
 function bii_get_attachment_id_from_url($attachment_url = '') {
 	global $wpdb;
@@ -77,9 +75,6 @@ function bii_options_page_link($param = null) {
 	return get_admin_url() . "options-general.php?page=" . Bii_menu_slug . "_options";
 }
 
-add_filter('bii_options_page_title', 'bii_options_page_title', 1, 2);
-add_filter('bii_options_page_link', 'bii_options_page_link', 1, 1);
-
 function bii_listeClass($val1 = null) {
 	$list = [
 		"global_class",
@@ -89,36 +84,31 @@ function bii_listeClass($val1 = null) {
 		"postmeta",
 		"users",
 		"usermeta",
+		"comments",
+		"commentmeta",
 	];
 	return $list;
 }
 
-add_filter("bii_liste_class", "bii_listeClass", 10, 1);
-
 function bii_includeClass($val1 = null) {
-	if (get_option("bii_useclasses")) {
-		do_action("bii_before_include_class");
-		$liste = apply_filters("bii_liste_class",$val1);		
-		foreach ($liste as $item) {
-			require_once(bii_advanced_admin_path . "class/$item.class.php");
-		}
-		do_action("bii_after_include_class");
-	}
-}
 
-add_action("bii_include_class", "bii_includeClass", 1, 1);
+	do_action("bii_before_include_class");
+	$liste = apply_filters("bii_liste_class", $val1);
+	foreach ($liste as $item) {
+		require_once(bii_advanced_admin_path . "class/$item.class.php");
+	}
+	do_action("bii_after_include_class");
+}
 
 function bii_advanced_admin_informations() {
 	?>
 	<tbody id="bii_advanced_admin">
 		<tr><th colspan="2">Bii_Admin</th>
 		<tr><td>Le dashboard est </td><td><?= bii_makebutton("bii_usedashboard"); ?></td></tr>
-		<tr><td>Les classes sont </td><td><?= bii_makebutton("bii_useclasses", 1,1); ?></td></tr>
+		<tr><td>Les classes sont </td><td><?= bii_makebutton("bii_useclasses", 1, 1); ?></td></tr>
 	</tbody>
 	<?php
 }
-
-add_action("bii_informations", "bii_advanced_admin_informations", 1);
 
 function bii_dashboard() {
 	$we_use_bii = true;
@@ -127,4 +117,40 @@ function bii_dashboard() {
 	include('admin/bii_dashboard.php');
 }
 
-do_action("bii_include_class");
+function bii_dashboard_content() {
+	?>
+	<div class="bii-tools">
+		<h2>Outils <button class="btn btn-default bii-make-this-visible" data-selector=".bii-tools-inner"><i class="fa fa-plus"></i></button></h2>
+		<div class="bii-tools-inner bii-invisible" >
+			<?php if (get_option("bii_useclasses")) { ?>
+			<a class="btn btn-info bii_action_ajax" data-action="bii_delete_not_approved" data-success="log" href="#"><span class="fa-stack fa-lg">
+					<i class="fa fa-comment-o fa-stack-1x"></i>
+					<i class="fa fa-ban fa-stack-2x text-danger"></i>
+				</span> Supprimmer les commentaires non approuvés</a>
+			<?php } ?>
+			<?php do_action("bii_tools"); ?>
+		</div>
+	</div>
+	<?php
+}
+
+
+
+add_action('admin_menu', 'bii_add_admin_pages');
+add_action('admin_enqueue_scripts', 'bii_enqueueJSAdmin');
+add_action('wp_ajax_bii_get_post', 'bii_get_post_ajax');
+add_action('wp_ajax_bii_change_wp_option', 'bii_ajax_changewpoption');
+add_filter('bii_options_page_title', 'bii_options_page_title', 1, 2);
+add_filter('bii_options_page_link', 'bii_options_page_link', 1, 1);
+add_filter("bii_liste_class", "bii_listeClass", 10, 1);
+add_action("bii_include_class", "bii_includeClass", 1, 1);
+add_action("bii_informations", "bii_advanced_admin_informations", 1);
+
+if (get_option("bii_useclasses")) {
+	do_action("bii_include_class");
+
+	add_action('wp_ajax_bii_delete_not_approved', 'bii_delete_not_approved');
+}
+if (get_option("bii_usedashboard")) {
+	add_action("bii_dashboard_content", "bii_dashboard_content", 1);
+}

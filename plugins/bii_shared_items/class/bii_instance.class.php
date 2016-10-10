@@ -382,6 +382,48 @@ class bii_instance extends bii_shared_item {
 		curl_close($ch);
 		return $result;
 	}
+	
+	function nbvisites($type = "per_day",$jour = null,$mois= null,$annee= null,$jourend = null,$moisend= null,$anneeend= null){
+		if($jour == null){
+			$jour = date("d");
+		}
+		if($mois == null){
+			$mois = date("m");
+		}
+		if($annee == null){
+			$annee = date("Y");
+		}
+		if($jourend == null){
+			$jourend = date("d");
+		}
+		if($moisend == null){
+			$moisend = date("m");
+		}
+		if($anneeend == null){
+			$anneeend = date("Y");
+		}
+		$prefix = $this->prefix_bdd();
+		$nom_table = $prefix.'statistics_visit';
+		$req = "select visit from $nom_table ";
+		$date_start = "$annee-$mois-$jour";
+		$date_end = "$anneeend-$moisend-$jourend";
+		if($type == "per_day"){
+			$req .= "last_counter = $date_start";
+		}
+		if($type == "beetween"){
+			$req .= "last_counter >= $date_start AND last_counter <= $date_end";
+		}
+		if($type == "since"){
+			$req .= "last_counter >= $date_start";
+		}
+		$pdo = $this->getPDO();
+		$select = $pdo->query($req);
+		$nb = 0;
+		while ($row = $select->fetch()) {
+			$nb += $row["last_counter"];
+		}
+		return $nb;
+	}
 
 	// */
 }
