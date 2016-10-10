@@ -315,3 +315,7 @@ span.over{
 .hide-relative:hover{
 	background-color: #EEEEEE;
 }
+
+.notice-info[data-group="wpml-st-string-scan"]{
+	display:none !important;
+}
