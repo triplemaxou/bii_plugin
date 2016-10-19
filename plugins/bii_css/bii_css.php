@@ -864,9 +864,11 @@ function bii_css_lazyload_logoos($atts, $content = null) {
 
 			// if has post thumbnail		
 			if (has_post_thumbnail($post[$i]->ID)) {
+//				wp_get_attachment_image_src($i)
 //				pre(get_intermediate_image_sizes());
 //				$thumbnailsrc = wp_get_attachment_image(get_post_meta($post[$i]->ID, '_thumbnail_id', true));
-				$thumbnailsrc = wp_get_attachment_image(get_post_meta($post[$i]->ID, '_thumbnail_id', true), "clients-slider");
+				$thumbnailsrc = wp_get_attachment_image_src(get_post_meta($post[$i]->ID, '_thumbnail_id', true), "clients-slider")[0];
+//				pre($thumbnailsrc);
 			}
 
 			if (get_post_meta($post[$i]->ID, 'link_target', true) != '') {
