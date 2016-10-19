@@ -634,5 +634,22 @@ if (!function_exists("debugEcho")) {
 
 		return $filter;
 	}
+	
+	function timestamp_today_midnight(){
+		$day = date("j");
+		$year = date("Y");
+		$month = date("n");
+		$timestamp = mktime(0, 0, 0, $month, $day, $year);
+		return $timestamp;
+		
+	}
+	function timestamp_yesterday_midnight(){
+		$day = date("j") * 1 -1;
+		$year = date("Y");
+		$month = date("n");
+		$timestamp = mktime(0, 0, 0, $month, $day, $year);
+		return $timestamp;
+		
+	}
 
 }

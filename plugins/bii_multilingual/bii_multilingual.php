@@ -258,7 +258,7 @@ function bii_multilingual_include_classes() {
 	}
 }
 
-function bii_multilingual_more_translation($text,$domain) {
+function bii_multilingual_more_translation($text, $domain) {
 	$bii_search = [];
 	$bii_replace = [];
 	$lang = bii_multilingual_current_language();
@@ -440,14 +440,17 @@ function bii_multilingual_date_format($value = "") {
 	$lang = bii_multilingual_current_language();
 	$long = "F j, Y g:i a";
 	$shortdays = "m/d/Y";
+	$hour = "g:i a";
 	if ($lang == "fr") {
 		$long = "d/m/Y H:i:s";
 		$shortdays = "d/m/Y";
+		$hour = "H:i:s";
 	}
 
 	return [
 		"long" => $long,
 		"shortdays" => $shortdays,
+		"hour" => $hour,
 	];
 }
 
@@ -459,7 +462,77 @@ function bii_multilingual_nfum_dataTableOptions($value = "") {
 	return $value;
 }
 
+function bii_multilingual_date($time, $post_id) {
+	$post = get_post($post_id);
+//	pre($post);
+	$date = $post->post_date;
+	$dt = new DateTime($date);
+	$now = time();
+	$timeposted = $dt->getTimestamp();
+	$twominutesago = $now - (2 * 60);
+	if ($timeposted > $twominutesago) {
+		$lang = bii_multilingual_current_language();
+		switch ($lang) {
+			case "fr":
+				$time = "A l'instant";
+				break;
+			default:
+				$time = "Just now";
+				break;
+		}
+	} else {
+		$time = "";
+		$lang = bii_multilingual_current_language();
+		$today_midnight = timestamp_today_midnight();
+		$yesterday_midnight = timestamp_yesterday_midnight();
+		if ($timeposted > $today_midnight) {
+			switch ($lang) {
+				case "fr":
+					$time = "Aujourd'hui à ";
+					break;
+				default:
+					$time = "Today at ";
+					break;
+			}
+			$format = bii_multilingual_date_format()["hour"];
+			$time .= $dt->format($format);
+		}
+		elseif ($timeposted > $yesterday_midnight) {
+			switch ($lang) {
+				case "fr":
+					$time = "Hier à ";
+					break;
+				default:
+					$time = "Yesterday at ";
+					break;
+			}
+			$format = bii_multilingual_date_format()["hour"];
+			$time .= $dt->format($format);
+		}else{
+			switch ($lang) {
+				case "fr":
+					$time = "Le ";
+					$liaison = " à ";
+					break;
+				default:
+					$time = "";
+					$liaison = " at ";
+					break;
+			}
+			
+			
+			$format1 = bii_multilingual_date_format()["shortdays"];
+			$format2 = bii_multilingual_date_format()["hour"];
+			
+			$time .= $dt->format($format1).$liaison.$dt->format($format2);
+		}
+	}
+	return $time;
+}
+
 if (get_option("bii_use_multilingual") && get_option("bii_useclasses")) {
+	add_filter("um_activity_human_post_time", "bii_multilingual_date");
+
 	add_filter("bii_multilingual_default_language_selection_admin_script", "bii_multilingual_default_language_selection_admin_script");
 	add_filter("bii_multilingual_default_language_admin_selection", "bii_multilingual_default_language_admin_selection");
 	add_filter("bii_multilingual_real_baseurl", "bii_multilingual_real_baseurl", 10, 2);
