@@ -2,12 +2,12 @@
 /*
   Plugin Name: Bii Advanced Admin
   Description: Ajoute des fonctionnalités dans l'interface d'admin
-  Version: 2.2
+  Version: 2.2.1
   Author: Biilink Agency
   Author URI: http://biilink.com/
   License: GPL2
  */
-define('bii_advanced_admin_version', '2.2');
+define('bii_advanced_admin_version', '2.2.1');
 define('bii_advanced_admin_path', plugin_dir_path(__FILE__));
 define('bii_advanced_admin_url', plugin_dir_url(__FILE__));
 
@@ -123,10 +123,10 @@ function bii_dashboard_content() {
 		<h2>Outils <button class="btn btn-default bii-make-this-visible" data-selector=".bii-tools-inner"><i class="fa fa-plus"></i></button></h2>
 		<div class="bii-tools-inner bii-invisible" >
 			<?php if (get_option("bii_useclasses")) { ?>
-			<a class="btn btn-info bii_action_ajax" data-action="bii_delete_not_approved" data-success="log" href="#"><span class="fa-stack fa-lg">
-					<i class="fa fa-comment-o fa-stack-1x"></i>
-					<i class="fa fa-ban fa-stack-2x text-danger"></i>
-				</span> Supprimmer les commentaires non approuvés</a>
+				<a class="btn btn-info bii_action_ajax" data-action="bii_delete_not_approved" data-success="log" href="#"><span class="fa-stack fa-lg">
+						<i class="fa fa-comment-o fa-stack-1x"></i>
+						<i class="fa fa-ban fa-stack-2x text-danger"></i>
+					</span> Supprimmer les commentaires non approuvés</a>
 			<?php } ?>
 			<?php do_action("bii_tools"); ?>
 		</div>
@@ -134,8 +134,11 @@ function bii_dashboard_content() {
 	<?php
 }
 
+function bii_advanced_admin_hidenotifs() {
+	echo '<style>.notice-info[data-group*="wpml-st-string-scan"], .settings-error{ 	display:none !important; }';
+}
 
-
+add_action( 'admin_head', 'bii_advanced_admin_hidenotifs' );
 add_action('admin_menu', 'bii_add_admin_pages');
 add_action('admin_enqueue_scripts', 'bii_enqueueJSAdmin');
 add_action('wp_ajax_bii_get_post', 'bii_get_post_ajax');

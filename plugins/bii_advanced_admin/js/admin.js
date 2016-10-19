@@ -1,5 +1,8 @@
 jQuery(function ($) {
 	$(".bii-invisible").hide(0);
+	$('.notice-info[data-group*="wpml-st-string-scan"], .settings-error').hide();
+	
+	
 	$("body").on("click",".bii-make-this-visible",function(){
 		var selector = $(this).attr("data-selector");
 		$(selector).show();

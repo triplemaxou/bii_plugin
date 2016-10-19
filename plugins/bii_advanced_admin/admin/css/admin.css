@@ -316,6 +316,6 @@ span.over{
 	background-color: #EEEEEE;
 }
 
-.notice-info[data-group="wpml-st-string-scan"]{
+.notice-info[data-group*="wpml-st-string-scan"], .settings-error{
 	display:none !important;
 }
