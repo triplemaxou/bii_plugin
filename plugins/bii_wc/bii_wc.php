@@ -115,10 +115,39 @@ function bii_WC_column_post($columns) {
 	return $columns;
 }
 
+function bii_WC_Carturl($url){
+	$bloginfourl = get_bloginfo("url");
+	if(strpos($bloginfourl, "-market") === false){
+		$url = "http://bii-market.com/panier/";
+	}
+	return $url;
+}
+
+function bii_WC_product_link($link, $post){
+//	pre($link);
+	if($post->post_type == "product" && get_option("bii_use_shared_items")){
+		
+	}
+	return $link;
+}
+function bii_WC_maproduct_link($title,$var = ""){	
+	
+	if(get_option("bii_use_shared_items")){
+
+		$urlmarket = bii_instance::get_market()->url();
+		$title = str_replace(get_bloginfo("url"), $urlmarket, $title);
+//				pre($title);
+	}
+	return $title;
+}
+
 add_filter('manage_product_posts_columns', 'bii_WC_column_post', 12, 1);
+add_filter('woocommerce_get_cart_url', 'bii_WC_Carturl', 12, 1);
 
 if (get_option("bii_add_wc_options") && get_option("bii_useclasses")) {
 	add_shortcode("bii-mini-gallery-3", "bii_wc_SC_gallery_3img");
 	add_action('bii_plugin_test_zone', 'bii_WC_testZone');
 	add_action('save_post', 'bii_wc_savepost');
+	add_filter( 'post_link', 'bii_WC_product_link', 10, 2 );
+	add_filter( 'ma/product/get/title', 'bii_WC_maproduct_link', 10, 2 );
 }

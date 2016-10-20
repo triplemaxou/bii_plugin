@@ -2,12 +2,12 @@
 /*
   Plugin Name: BiiDebug
   Description: Ajoute des fonctions de débug, invisibles pour le public
-  Version: 2.7
+  Version: 2.8
   Author: Biilink Agency
   Author URI: http://biilink.com/
   License: GPL2
  */
-define('bii_debug_version', '2.7');
+define('bii_debug_version', '2.8');
 
 define('BiiDebug_path', plugin_dir_path(__FILE__));
 define('bii_debug_path', plugin_dir_path(__FILE__));
@@ -54,7 +54,7 @@ if (!(get_option("bii_xxsmall_width"))) {
 	update_option("bii_xxsmall_width", 479);
 }
 if (!(get_option("bii_ipallowed"))) {
-	update_option("bii_ipallowed", "77.154.194.84");
+	update_option("bii_ipallowed", "192.168.1.1");
 }
 if (get_option("bii_disallow_emojis") === false) {
 	update_option("bii_disallow_emojis", "1");
@@ -74,7 +74,8 @@ function bii_showlogs() {
 		var bii_role = "<?= $role; ?>";
 		var bii_lang = "fr";
 		var ip_client = myip;
-		if (ip_client == "<?= get_option("bii_ipallowed"); ?>") {
+		var ip_allowed = "<?= get_option("bii_ipallowed"); ?>";
+		if (ip_allowed.indexOf(ip_client) != -1) {
 			bii_showlogs = true;
 		}
 		var bii_multilingual_activated = false;
@@ -99,7 +100,8 @@ add_action("bii_informations", function() {
 });
 
 function bii_canshow_debug() {
-	return $_SERVER["REMOTE_ADDR"] == get_option("bii_ipallowed");
+	$ipallowed = explode(',',get_option("bii_ipallowed"));	
+	return in_array($_SERVER["REMOTE_ADDR"], $ipallowed);
 }
 
 /* Retirer emojis */
@@ -131,7 +133,7 @@ add_action("bii_options", function() {
 		bii_makestuffbox("bii_small_width", "Pixels maximum sm", "number", "col-xxs-12 col-sm-6 col-md-3");
 		bii_makestuffbox("bii_xsmall_width", "Pixels maximum xs", "number", "col-xxs-12 col-sm-6 col-md-3");
 		bii_makestuffbox("bii_xxsmall_width", "Pixels maximum xxs", "number", "col-xxs-12 col-sm-6 col-md-3");
-		bii_makestuffbox("bii_ipallowed", "Adresse IP de débug", "text", "col-xxs-12 col-sm-6 col-md-3");
+		bii_makestuffbox("bii_ipallowed", "Adresses IP de débug", "text", "col-xxs-12 col-sm-6 col-md-3");
 		bii_makestuffbox("bii_bodyclass_list", "Liste des classes de body possibles (séparer par des virgules)", "text", "col-xxs-12 col-sm-6 col-md-6");
 		bii_makestuffbox("bii_provider", "Bii provider", "text", "col-xxs-12 col-sm-6 col-md-3");
 
@@ -155,7 +157,7 @@ add_filter("bii_options_debug_tableau_check", "bii_options_debug_tableau_check")
 
 function bii_options_debug_tableau_check($toadd = []) {
 	$tableaucheck = ["bii_medium_width", "bii_small_width", "bii_xsmall_width", "bii_xxsmall_width", "bii_bodyclass_list", "bii_provider", "bii_ipallowed", "bii_analytics_tracking_code"];
-	$toadd2 = apply_filters("bii_options_debug_tableau_check_more","");
+	$toadd2 = apply_filters("bii_options_debug_tableau_check_more", "");
 	if (count($toadd)) {
 		$tableaucheck = array_merge($tableaucheck, $toadd);
 	}

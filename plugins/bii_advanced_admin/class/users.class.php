@@ -143,7 +143,7 @@ class users extends global_class {
 	public function add_rights_to_others_sites() {
 		if (get_option("bii_use_shared_items")) {
 			$prefix = "wp_biimarket_";
-			$prefixes = bii_instance::get_all_prefixes();
+			$prefixes = bii_instance::get_all_prefixes($prefix);
 			$cap = ["subscriber"];
 			$level = 0;
 			foreach ($prefixes as $prefix) {
