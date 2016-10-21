@@ -258,7 +258,7 @@ function bii_multilingual_include_classes() {
 	}
 }
 
-function bii_multilingual_more_translation($text, $domain) {
+function bii_multilingual_more_translation($text, $domain = "") {
 	$bii_search = [];
 	$bii_replace = [];
 	$lang = bii_multilingual_current_language();
