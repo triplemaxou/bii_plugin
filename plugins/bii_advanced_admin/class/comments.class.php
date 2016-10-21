@@ -23,6 +23,8 @@ class comments extends global_class {
 	}
 
 	public static function delete_not_approved(){
+		$nb = static::nb("comment_approved = 0");
 		static::deleteWhere("comment_approved = 0");
+		return $nb;
 	}
 }

@@ -13,6 +13,8 @@ class commentmeta extends global_class {
 
 	public static function delete_orphans(){
 		$prefix = static::prefix_bdd();
+		$nb = static::nb("comment_id not IN (select comment_ID from $prefix"."comments)");
 		static::deleteWhere("comment_id not IN (select comment_ID from $prefix"."comments)");
+		return $nb;
 	}
 }

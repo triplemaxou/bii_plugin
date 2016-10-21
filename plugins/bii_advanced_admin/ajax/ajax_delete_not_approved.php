@@ -1,3 +1,5 @@
 <?php
-comments::delete_not_approved();
-commentmeta::delete_orphans();
+echo comments::delete_not_approved();
+echo " not approved ";
+echo commentmeta::delete_orphans();
+echo " orphans";

@@ -117,8 +117,12 @@ function bii_WC_column_post($columns) {
 
 function bii_WC_Carturl($url){
 	$bloginfourl = get_bloginfo("url");
+	
 	if(strpos($bloginfourl, "-market") === false){
-		$url = "http://bii-market.com/panier/";
+//		pre($bloginfourl);
+		$url = bii_instance::get_market()->url();
+		$url = "$url/panier/";
+//		pre($url);
 	}
 	return $url;
 }
