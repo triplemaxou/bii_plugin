@@ -1,4 +1,13 @@
 jQuery(function ($) {
+	bii_CL("ok");
+	
+	if ($("#adminmenu").length) {
+		if (window.location.href.indexOf("-market") == -1 && bii_showlogs) {
+			$("#adminmenu, #wpadminbar").css("background-color", "#53282d");
+			
+		}
+	}
+	
 	$(".bii-invisible").hide(0);
 	$('.notice-info[data-group*="wpml-st-string-scan"], .settings-error').hide();
 	

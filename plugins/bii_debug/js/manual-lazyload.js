@@ -69,7 +69,7 @@ function loadLazyquick() {
 function loadquick($element, size, zonetop, zonebottom) {
 	var top = $element.offset().top;
 	var bottom = top + $element.height();
-	if (bottom >= zonetop && top <= zonebottom) {
+	if (bottom >= zonetop && top <= zonebottom && !$element.parents(".hidden, .hidden-" + size).length) {
 		$element.trigger("loadquick");
 		$element.trigger("loadquick-" + size);
 		$element.addClass("loaded");
