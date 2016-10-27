@@ -105,7 +105,7 @@ function bii_WC_testZone() {
 }
 
 function bii_WC_column_post($columns) {
-	$toremove = ["wpseo-title","product_tag","sku","wpseo-score","wpseo-score-readability","wpseo-metadesc","wpseo-focuskw","product_type"];
+	$toremove = ["wpseo-title", "product_tag", "sku", "wpseo-score", "wpseo-score-readability", "wpseo-metadesc", "wpseo-focuskw", "product_type"];
 	foreach ($toremove as $remove) {
 		if (isset($columns[$remove])) {
 			unset($columns[$remove]);
@@ -115,10 +115,10 @@ function bii_WC_column_post($columns) {
 	return $columns;
 }
 
-function bii_WC_Carturl($url){
+function bii_WC_Carturl($url) {
 	$bloginfourl = get_bloginfo("url");
-	
-	if(strpos($bloginfourl, "-market") === false){
+
+	if (strpos($bloginfourl, "-market") === false) {
 //		pre($bloginfourl);
 		$url = bii_instance::get_market()->url();
 		$url = "$url/panier/";
@@ -127,22 +127,36 @@ function bii_WC_Carturl($url){
 	return $url;
 }
 
-function bii_WC_product_link($link, $post){
+function bii_WC_product_link($link, $post) {
 //	pre($link);
-	if($post->post_type == "product" && get_option("bii_use_shared_items")){
+	if ($post->post_type == "product" && get_option("bii_use_shared_items")) {
 		
 	}
 	return $link;
 }
-function bii_WC_maproduct_link($title,$var = ""){	
-	
-	if(get_option("bii_use_shared_items")){
+
+function bii_WC_maproduct_link($title, $var = "") {
+
+	if (get_option("bii_use_shared_items")) {
 
 		$urlmarket = bii_instance::get_market()->url();
 		$title = str_replace(get_bloginfo("url"), $urlmarket, $title);
 //				pre($title);
 	}
 	return $title;
+}
+
+function bii_WC_dashboard() {
+	?>
+	<div class="bii_WC_dashboard col-xxs-12 col-sm-6">
+		<ul>
+			<li>Nombre de produits : <?= posts::nb("post_type = 'product' AND post_status = 'publish'") ?></li>
+			<li>Nombre de produits en attente : <?= posts::nb("post_type = 'product' AND post_status = 'pending'") ?></li>
+			<li>Nombre de produits en brouillon : <?= posts::nb("post_type = 'product' AND post_status = 'draft'") ?></li>
+			<li>Nombre de vendeurs :  <?= users::nb("ID in (select distinct user_id FROM ".usermeta::nom_classe_bdd()." where meta_key = 'wp_biimarket_capabilities' AND meta_value like '%publish_products%')") -1 ?></li>
+		</ul>
+	</div>
+	<?php
 }
 
 add_filter('manage_product_posts_columns', 'bii_WC_column_post', 12, 1);
@@ -152,6 +166,8 @@ if (get_option("bii_add_wc_options") && get_option("bii_useclasses")) {
 	add_shortcode("bii-mini-gallery-3", "bii_wc_SC_gallery_3img");
 	add_action('bii_plugin_test_zone', 'bii_WC_testZone');
 	add_action('save_post', 'bii_wc_savepost');
-	add_filter( 'post_link', 'bii_WC_product_link', 10, 2 );
-	add_filter( 'ma/product/get/title', 'bii_WC_maproduct_link', 10, 2 );
+	add_filter('post_link', 'bii_WC_product_link', 10, 2);
+	add_filter('ma/product/get/title', 'bii_WC_maproduct_link', 10, 2);
+	
+	add_action("bii_dashboard_content", "bii_WC_dashboard");
 }

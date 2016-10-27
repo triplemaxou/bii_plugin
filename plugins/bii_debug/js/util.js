@@ -8,8 +8,7 @@ function bii_CL(value,css) {
 			console.log(value,css);
 		}else{
 			console.log(value);
-		}
-		
+		}		
 	}
 }
 function bii_CL_error(value) {
