@@ -11,7 +11,7 @@ class usermeta extends global_class {
 		if(defined('CUSTOM_USER_META_TABLE')){
 			$nom_class = CUSTOM_USER_META_TABLE;
 		}else{
-			$nom_class = parent::nom_classe_bdd();
+			$nom_class = static::prefix_bdd().parent::nom_classe_bdd();
 		}
 		return $nom_class;
 	}

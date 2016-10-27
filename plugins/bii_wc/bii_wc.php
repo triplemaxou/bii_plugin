@@ -2,13 +2,13 @@
 /*
   Plugin Name: Bii_wc
   Description: Gestion d'un système de compte unique à plusieurs wordpress
-  Version: 0.1
+  Version: 0.2
   Author: Biilink Agency
   Author URI: http://biilink.com/
   License: GPL2
  */
 
-define('bii_wc_version', '0.1');
+define('bii_wc_version', '0.2');
 define('bii_wc_path', plugin_dir_path(__FILE__));
 define('bii_wc_url', plugin_dir_url(__FILE__));
 
@@ -149,11 +149,12 @@ function bii_WC_maproduct_link($title, $var = "") {
 function bii_WC_dashboard() {
 	?>
 	<div class="bii_WC_dashboard col-xxs-12 col-sm-6">
+		<h2>Statistiques</h2>
 		<ul>
 			<li>Nombre de produits : <?= posts::nb("post_type = 'product' AND post_status = 'publish'") ?></li>
 			<li>Nombre de produits en attente : <?= posts::nb("post_type = 'product' AND post_status = 'pending'") ?></li>
 			<li>Nombre de produits en brouillon : <?= posts::nb("post_type = 'product' AND post_status = 'draft'") ?></li>
-			<li>Nombre de vendeurs :  <?= users::nb("ID in (select distinct user_id FROM ".usermeta::nom_classe_bdd()." where meta_key = 'wp_biimarket_capabilities' AND meta_value like '%publish_products%')") -1 ?></li>
+			<li>Nombre de vendeurs :  <?= users::nb("ID in (select distinct user_id FROM ".usermeta::nom_classe_bdd()." where meta_key = 'wp_biimarket_capabilities' AND meta_value like '%publish_products%')")*1 -1 ?></li>
 		</ul>
 	</div>
 	<?php
