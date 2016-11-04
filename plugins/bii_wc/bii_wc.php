@@ -151,10 +151,12 @@ function bii_WC_dashboard() {
 	<div class="bii_WC_dashboard col-xxs-12 col-sm-6">
 		<h2>Statistiques</h2>
 		<ul>
+			<li>Nombre de vendeurs :  <?= users::nb("ID in (select distinct user_id FROM " . usermeta::nom_classe_bdd() . " where meta_key = 'wp_biimarket_capabilities' AND meta_value like '%publish_products%')") * 1 - 1 ?></li>
+
 			<li>Nombre de produits : <?= posts::nb("post_type = 'product' AND post_status = 'publish'") ?></li>
 			<li>Nombre de produits en attente : <?= posts::nb("post_type = 'product' AND post_status = 'pending'") ?></li>
 			<li>Nombre de produits en brouillon : <?= posts::nb("post_type = 'product' AND post_status = 'draft'") ?></li>
-			<li>Nombre de vendeurs :  <?= users::nb("ID in (select distinct user_id FROM ".usermeta::nom_classe_bdd()." where meta_key = 'wp_biimarket_capabilities' AND meta_value like '%publish_products%')")*1 -1 ?></li>
+
 		</ul>
 	</div>
 	<?php
@@ -169,6 +171,6 @@ if (get_option("bii_add_wc_options") && get_option("bii_useclasses")) {
 	add_action('save_post', 'bii_wc_savepost');
 	add_filter('post_link', 'bii_WC_product_link', 10, 2);
 	add_filter('ma/product/get/title', 'bii_WC_maproduct_link', 10, 2);
-	
+
 	add_action("bii_dashboard_content", "bii_WC_dashboard");
 }

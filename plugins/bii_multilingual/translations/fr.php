@@ -9,13 +9,21 @@ bii_multilingual_add_translation("Register", "S'inscrire", $bii_search, $bii_rep
 bii_multilingual_add_translation("Login", "Se connecter", $bii_search, $bii_replace);
 bii_multilingual_add_translation("Cover Image", "Image de couverture", $bii_search, $bii_replace);
 // </editor-fold>
+// <editor-fold desc="Bii multilingual">
+ if($domain == "bii-multilingual"){
+	bii_multilingual_add_translation("Shop", "Boutique", $bii_search, $bii_replace);
+	bii_multilingual_add_translation('Add new product', "Nouveau produit", $bii_search, $bii_replace);
+}
+// </editor-fold>
 // <editor-fold desc="Ultimate Member">
 if($domain == "um-activity"){
 	bii_multilingual_add_translation("just created a new blog", "a écrit un nouvel", $bii_search, $bii_replace);
 	bii_multilingual_add_translation("post", "article", $bii_search, $bii_replace);
 	bii_multilingual_add_translation("product", "produit", $bii_search, $bii_replace);
 	bii_multilingual_add_translation("just added a new", "a ajouté un nouveau", $bii_search, $bii_replace);
+	
 }
+
 
 bii_multilingual_add_translation("has viewed your profile.", "a regardé votre profil.", $bii_search, $bii_replace);
 bii_multilingual_add_translation("has <strong>replied</strong> to a topic you started on the forum.", "a <strong>répondu</strong> à un sujet que vous avez posté sur le forum.", $bii_search, $bii_replace);

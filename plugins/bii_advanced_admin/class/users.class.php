@@ -17,7 +17,7 @@ class users extends global_class {
 		if (defined('CUSTOM_USER_TABLE')) {
 			$nom_class = CUSTOM_USER_TABLE;
 		} else {
-			$nom_class = static::prefix_bdd().parent::nom_classe_bdd();
+			$nom_class = parent::nom_classe_bdd();
 		}
 		return $nom_class;
 	}

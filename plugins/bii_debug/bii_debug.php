@@ -2,12 +2,12 @@
 /*
   Plugin Name: BiiDebug
   Description: Ajoute des fonctions de débug, invisibles pour le public
-  Version: 2.8
+  Version: 2.9
   Author: Biilink Agency
   Author URI: http://biilink.com/
   License: GPL2
  */
-define('bii_debug_version', '2.8');
+define('bii_debug_version', '2.9');
 
 define('BiiDebug_path', plugin_dir_path(__FILE__));
 define('bii_debug_path', plugin_dir_path(__FILE__));
@@ -327,3 +327,13 @@ function bii_debug_reduce_weight_thumnail_massive($return, $method) {
 }
 
 add_filter("ma/product/build/thumbnail", "bii_debug_reduce_weight_thumnail_massive");
+
+
+function bii_debug_wpb_getImageBySize( $params = array() ) {
+//	pre($params);
+	$params["thumbnail"] = str_replace("src=", 'src="data:image/gif;base64,R0lGODdhAQABAPAAAP///wAAACwAAAAAAQABAEACAkQBADs=" data-original=', $params["thumbnail"]);
+	$params["thumbnail"] = str_replace("srcset=", 'data-srcset=', $params["thumbnail"]);
+	return $params;
+}
+
+add_filter("vc_wpb_getimagesize", "bii_debug_wpb_getImageBySize",1);

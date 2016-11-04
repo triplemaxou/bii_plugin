@@ -214,7 +214,6 @@ function bii_multilingual_body_class($classes, $class = "") {
 
 function bii_multilingual_current_language() {
 	$lang = 'fr';
-
 	global $wp_query;
 	if (isset($wp_query->query_vars["lang"])) {
 		$lang = $wp_query->query_vars["lang"];
@@ -262,17 +261,10 @@ function bii_multilingual_more_translation($text, $domain = "") {
 	$bii_search = [];
 	$bii_replace = [];
 	$lang = bii_multilingual_current_language();
-	if ($lang == "fr") {
-
-
-		include(bii_multilingual_path . "/translations/fr.php");
+	$path = bii_multilingual_path . "/translations/$lang.php";
+	if(file_exists($path)){
+		include($path);
 	}
-	if ($lang == "en") {
-
-		include(bii_multilingual_path . "/translations/en.php");
-	}
-//	pre($bii_search);
-//	pre($bii_replace);
 	$rep = str_replace($bii_search, $bii_replace, $text);
 	return $rep;
 }

@@ -7,7 +7,7 @@
   Author URI: http://biilink.com/
   License: GPL2
  */
-define('bii_advanced_shortcodes', '1.1');
+define('bii_advanced_shortcodes', '1.2');
 
 function bii_SC_displaywhenrequest($atts, $content = null) {
 	$display = true;

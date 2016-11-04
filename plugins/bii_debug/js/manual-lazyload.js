@@ -25,7 +25,12 @@ jQuery(function () {
 		console.log("lazyload n'existe pas");
 		jQuery("img[data-original]").each(function () {
 			var dor = jQuery(this).attr("data-original");
+			var datasrcset = jQuery(this).attr("data-srcset");
 			jQuery(this).attr("src", dor);
+			if(datasrcset){
+				jQuery(this).attr("data-srcset", datasrcset);
+				jQuery(this).attr("data-srcset","");
+			}
 		});
 	}
 	loadLazyquick();
