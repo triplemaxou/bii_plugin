@@ -135,12 +135,13 @@ function bii_finance_menu() {
 }
 
 add_action("bii_informations", function() {
-	?>
-	<tbody id="bii_bdd">
+	if (get_option("bii_useclasses")) { ?>
+	<tbody id="bii_finance">
 		<tr><th colspan="2">Bii_finance</th>
 		<tr><td>Bii_Finance est </td><td><?= bii_makebutton("bii_finance_activated"); ?></td></tr>
 	</tbody>
 	<?php
+	}
 }, 12);
 
 function bii_currencytoflag($cur) {

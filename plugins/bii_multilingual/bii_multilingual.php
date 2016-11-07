@@ -18,7 +18,7 @@ add_action("bii_informations", function() {
 		<tr><th colspan="2">Bii_Multilingual</th>
 		<tr><td>Bii multilingue est </td><td><?= bii_makebutton("bii_use_multilingual"); ?></td></tr>
 		<?php
-		if (get_option("bii_use_multilingual")) {
+		if (get_option("bii_use_multilingual") && class_exists("GTranslate")) {
 			?><tr><td>Les options avec Gtranslate sont </td><td><?= bii_makebutton("bii_use_gtranslate", 1, 1); ?></td></tr><?php
 		}
 		?>

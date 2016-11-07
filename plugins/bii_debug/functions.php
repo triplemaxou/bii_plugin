@@ -175,26 +175,56 @@ if (!function_exists("debugEcho")) {
 		}
 	}
 
-	function bii_custom_log($log, $addprefix = "",$instance = "") {
+	function bii_custom_log($log, $addprefix = "", $instance = "") {
 		$url = str_replace(".log", "$instance.log", bii_debug_logs_custom_path);
-		
-		$res = fopen($url, "a+");		
-		if ($res !== false) {			
+
+		$res = fopen($url, "a+");
+		if ($res !== false) {
 			if (is_array($log) || is_object($log)) {
 				$log = print_r($log, true);
 			}
 			$date = date("d/m/Y h:i:s");
 			$prefix = "[Bii_cl v" . bii_debug_version . " $date $addprefix] ";
 			$suffix = "\n";
-			$log = $prefix . $log.$suffix;
+			$log = $prefix . $log . $suffix;
 			fwrite($res, $log);
 			fclose($res);
 //			pre($log,"green");
-		}else{
+		} else {
 			bii_write_log($log);
 //			pre($log,"red");
 		}
-		
+	}
+
+	function bii_check_option($option = "", $invert = false) {
+		$ret = true;
+		if (is_array($option)) {
+			foreach ($option as $key => $item) {
+				if (is_array($item)) {
+					$optiontocheck = $item[0];
+					$invert = $item[1];
+					$optiontocheck = get_option($optiontocheck);
+					if ($invert) {
+						$optiontocheck = bii_invertbool($optiontocheck);
+					}
+					$ret *= $optiontocheck;
+				} else {
+					$ret *= (bool) get_option($item);
+				}
+			}
+		} else {
+			$option = get_option($option);
+			$ret = (bool) $option;
+			if ($invert) {
+				$option = bii_invertbool($option);
+			}
+		}
+//		pre($ret);
+		return !$ret;
+	}
+
+	function bii_invertbool($bool) {
+		return !$bool;
 	}
 
 	function bii_makebutton($option, $pluriel = false, $feminin = false, $invert = false, $disabled = false) {
@@ -226,7 +256,8 @@ if (!function_exists("debugEcho")) {
 			$valtexte.="s";
 		}
 		$valdisabled = "";
-		if($disabled){
+		
+		if ($disabled) {
 			$valdisabled = "disabled='disabled";
 		}
 		$button = "<button data-newval='$gotoval' data-option='$option' $valdisabled class='bii_upval btn btn-info'><i class='fa $facheck'></i> $valtexte</button>";
@@ -634,22 +665,21 @@ if (!function_exists("debugEcho")) {
 
 		return $filter;
 	}
-	
-	function timestamp_today_midnight(){
+
+	function timestamp_today_midnight() {
 		$day = date("j");
 		$year = date("Y");
 		$month = date("n");
 		$timestamp = mktime(0, 0, 0, $month, $day, $year);
 		return $timestamp;
-		
 	}
-	function timestamp_yesterday_midnight(){
-		$day = date("j") * 1 -1;
+
+	function timestamp_yesterday_midnight() {
+		$day = date("j") * 1 - 1;
 		$year = date("Y");
 		$month = date("n");
 		$timestamp = mktime(0, 0, 0, $month, $day, $year);
 		return $timestamp;
-		
 	}
 
 }

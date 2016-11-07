@@ -89,12 +89,14 @@ function bii_wc_SC_gallery_3img($args = [], $content = "") {
 }
 
 function bii_wc_informations() {
+	if (class_exists("WooCommerce")) {	
 	?>
-	<tbody id="bii_shared_items">
+	<tbody id="bii_wc">
 		<tr><th colspan="2">Bii_woocommerce</th>
 		<tr><td>Les options supplémentaires pour woocommerce sont </td><td><?= bii_makebutton("bii_add_wc_options", 1, 1); ?></td></tr>
 	</tbody>
 	<?php
+}
 }
 
 add_action("bii_informations", "bii_wc_informations");

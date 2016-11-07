@@ -16,12 +16,16 @@ define('bii_um_url', plugin_dir_url(__FILE__));
 
 
 add_action("bii_informations", function() {
-	?>
-	<tbody id="bii_bdd">
-		<tr><th colspan="2">Bii_um</th>
-		<tr><td>Les options supplémentaires pour ultimate member sont </td><td><?= bii_makebutton("bii_use_um", 1, 1); ?></td></tr>
-	</tbody>
-	<?php
+	if (class_exists("UM_User")) {
+		?>
+		<tbody id="bii_um">
+			<tr><th colspan="2">Bii_um</th>
+
+			<tr><td>Les options supplémentaires pour ultimate member sont </td><td><?= bii_makebutton("bii_use_um", 1, 1); ?></td></tr>
+
+		</tbody>
+		<?php
+	}
 }, 12);
 
 function bii_um_filter_query($unfiltered) {
@@ -161,7 +165,7 @@ function bii_um_user_id() {
 		<?php
 	}
 	if ($wp_query->query_vars["page_id"] == 383) {
-
+		
 	}
 	?><?php
 }

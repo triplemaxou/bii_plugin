@@ -14,12 +14,14 @@ define('bii_one_post_a_day_items_url', plugin_dir_url(__FILE__));
 
 
 add_action("bii_informations", function() {
-	?>
-	<tbody id="bii_one_post_a_day">
-		<tr><th colspan="2">Un article par jour</th>
-		<tr><td>Un article par jour est </td><td><?= bii_makebutton("bii_use_opad"); ?></td></tr>
-	</tbody>
-	<?php
+	if (get_option("bii_useclasses")) {
+		?>
+		<tbody id="bii_one_post_a_day">
+			<tr><th colspan="2">Un article par jour</th>
+			<tr><td>Un article par jour est </td><td><?= bii_makebutton("bii_use_opad"); ?></td></tr>
+		</tbody>
+		<?php
+	}
 });
 
 function bii_include_class_one_post_a_day() {

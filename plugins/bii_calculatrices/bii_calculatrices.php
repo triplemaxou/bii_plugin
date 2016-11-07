@@ -2,12 +2,12 @@
 /*
   Plugin Name: Bii Calculatrice
   Description: Ajoute des calculatrices
-  Version: 0.2
+  Version: 0.3
   Author: Biilink Agency
   Author URI: http://biilink.com/
   License: GPL2
  */
-define('bii_calculatrices_version', '0.2');
+define('bii_calculatrices_version', '0.3');
 define('bii_calculatrices_path', plugin_dir_path(__FILE__));
 define('bii_calculatrices_url', plugin_dir_url(__FILE__));
 
@@ -39,7 +39,7 @@ function bii_calculatrices_SC_calc($atts, $content = null) {
 	return $content;
 }
 
-function bii_calculatrice_noms($var="") {
+function bii_calculatrice_noms($var = "") {
 	return [
 		"bii_taille_vetements",
 		"bii_taille_chaussure",
@@ -88,13 +88,18 @@ function bii_calculatrices_enqueueJS() {
 add_action("bii_informations", function() {
 	?>
 	<tbody id="bii_bdd">
+
 		<tr><th colspan="2">Bii_calculatrices</th>
-		<tr><td>Les calculatrices sont  </td><td><?= bii_makebutton("bii_use_calculatrice", 1, 1); ?></td></tr>
+			<?php if (get_option("bii_useclasses")) { ?>
+			<tr><td>Les calculatrices sont  </td><td><?= bii_makebutton("bii_use_calculatrice", 1, 1); ?></td></tr>
+		<?php } else { ?>
+			<tr><td colspan="2">Activez les classes pour voir les options</td></tr>
+		<?php } ?>
 	</tbody>
 	<?php
 }, 12);
 
-if (get_option("bii_use_calculatrice")&& get_option("bii_useclasses")) {
+if (get_option("bii_use_calculatrice") && get_option("bii_useclasses")) {
 
 	add_shortcode('bii_calculatrice', 'bii_calculatrices_SC_calc');
 	add_filter("bii_calculatrice_noms", "bii_calculatrice_noms");

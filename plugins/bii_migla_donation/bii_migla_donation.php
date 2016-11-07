@@ -43,12 +43,14 @@ function bii_migla_ajax_userinfo(){
 }
 
 add_action("bii_informations", function() {
+	if (function_exists("miglainit_option")) {	
 	?>
-	<tbody id="bii_bdd">
+	<tbody id="bii_migla">
 		<tr><th colspan="2">Bii_migla</th>
 		<tr><td>Les options supplémentaires pour Total Donation sont </td><td><?= bii_makebutton("bii_use_migla_donation", 1, 1); ?></td></tr>
 	</tbody>
 	<?php
+	}
 }, 12);
 
 function bii_migla_enqueueJS() {

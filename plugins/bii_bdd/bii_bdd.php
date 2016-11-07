@@ -16,8 +16,12 @@ add_action("bii_informations", function() {
 	?>
 	<tbody id="bii_bdd">
 		<tr><th colspan="2">Bii_BDD</th>
-		<tr><td>La base de données des communes est  </td><td><?= bii_makebutton("bii_use_bddcommunes", 0, 1); ?></td></tr>
-		<tr><td>La base de données spécifique au plugin est  </td><td><?= bii_makebutton("bii_use_bddplugin", 0, 1); ?></td></tr>
+			<?php if (get_option("bii_useclasses")) { ?>
+			<tr><td>La base de données des communes est  </td><td><?= bii_makebutton("bii_use_bddcommunes", 0, 1); ?></td></tr>
+			<tr><td>La base de données spécifique au plugin est  </td><td><?= bii_makebutton("bii_use_bddplugin", 0, 1); ?></td></tr>
+		<?php } else { ?>
+			<tr><td colspan="2">Activez les classes pour voir les options</td></tr>
+		<?php } ?>
 	</tbody>
 	<?php
 });
@@ -36,7 +40,7 @@ if (get_option("bii_use_bddplugin") || get_option("bii_use_bddcommunes")) {
 	add_action("bii_options_title", function() {
 		?>
 		<li role="presentation" class="hide-relative " data-relative="pl-bdd"><i class="fa fa-database"></i> Bases de données</li>
-		
+
 		<?php
 	});
 	add_action("bii_options", function() {
@@ -60,7 +64,9 @@ if (get_option("bii_use_bddplugin") || get_option("bii_use_bddcommunes")) {
 		<?php
 	});
 }
-function include_rpdo(){	
+
+function include_rpdo() {
 	require_once(bii_bdd_path . "class/rpdo.class.php");
 }
-add_action("bii_before_include_class","include_rpdo",1);
+
+add_action("bii_before_include_class", "include_rpdo", 1);
