@@ -71,7 +71,6 @@ function bii_SC_image_une_src($atts) {
 function bii_SC_tower_titles($atts = [], $content = '') {
 	$contents = "";
 	if ($atts["titres"]) {
-
 		ob_start();
 		?>
 		<div class="bii_tower_titles vc_col-xs-5 vc_col-sm-4 vc_col-md-3">
@@ -85,7 +84,6 @@ function bii_SC_tower_titles($atts = [], $content = '') {
 				<?php
 			}
 			?>
-
 		</div>
 		<?php
 		$contents = ob_get_contents();
