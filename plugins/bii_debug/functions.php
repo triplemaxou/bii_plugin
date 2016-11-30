@@ -227,6 +227,15 @@ if (!function_exists("debugEcho")) {
 		return !$bool;
 	}
 
+	/**
+	 * 
+	 * @param string $option Nom de l'option wordpress à "boutoniser"
+	 * @param bool $pluriel Indique si l'option est à afficher au pluriel
+	 * @param bool $feminin Indique si l'option est à afficher au féminin
+	 * @param bool $invert Indique si l'option est à afficher à l'envers (0 => true, 1 =>false)
+	 * @param bool $disabled Indique si le bouton est disabled ou pas
+	 * @return string Code HTML du bouton généré
+	 */
 	function bii_makebutton($option, $pluriel = false, $feminin = false, $invert = false, $disabled = false) {
 		$array_switch = ["désactivé", "activé"];
 //	$array_switch = ["désactivé", "activé"];
