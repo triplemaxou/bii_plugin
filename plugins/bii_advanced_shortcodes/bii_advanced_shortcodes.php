@@ -2,12 +2,12 @@
 /*
   Plugin Name: Bii advanced shortcodes
   Description: Ajoute des shortcodes avancés
-  Version: 1.1
+  Version: 1.3
   Author: Biilink Agency
   Author URI: http://biilink.com/
   License: GPL2
  */
-define('bii_advanced_shortcodes', '1.2');
+define('bii_advanced_shortcodes', '1.3');
 
 function bii_SC_displaywhenrequest($atts, $content = null) {
 	$display = true;
@@ -557,6 +557,30 @@ function bii_SC_icon_boxes($atts, $content = null) {
 	return $output;
 }
 
+
+function bii_SC_displaytimestamp($attrs = [],$content=''){
+	return time();
+}
+function bii_SC_displayindate($attrs = [],$content=''){
+	$timestampbegin = 0;
+	
+	$contents = "";
+	if(isset($attrs["begin"])){
+		$timestampbegin = $attrs["begin"];
+	}
+	if(isset($attrs["end"])){
+		$timestampend = $attrs["end"];
+	}else{
+		$timestampend = time() + 60000;
+	}
+	$now = time();
+	if($now >= $timestampbegin && $now <= $timestampend){
+		
+//		$contents .= "$timestampbegin $timestampend <br />";
+		$contents .= do_shortcode($content);
+	}	
+	return $contents;
+}
 add_shortcode('bii_displaywhenrequest', 'bii_SC_displaywhenrequest');
 add_shortcode('bii_notdisplaywhenrequest', 'bii_SC_notdisplaywhenrequest');
 add_shortcode('bii_loremipsum', 'bii_loremipsum');
@@ -565,6 +589,8 @@ add_shortcode('bii_imageune_src', 'bii_SC_image_une_src');
 add_shortcode('bii_tower_titles', 'bii_SC_tower_titles');
 add_shortcode('bii_tower_items', 'bii_SC_tower_items');
 add_shortcode('bii_tower_item', 'bii_SC_tower_item');
+add_shortcode("bii_tmstp_match","bii_SC_displayindate");
+add_shortcode("bii_current_tmstp","bii_SC_displaytimestamp");
 
 add_shortcode('bii_getblog', 'bii_SC_get_bloginfo');
 
@@ -596,6 +622,10 @@ add_action("bii_base_shortcodes", function() {
 	<tr>
 		<td><strong>[bii_loremipsum]</strong></td>
 		<td>Génère du lorem ipsum</td>
+	</tr>
+	<tr>
+		<td><strong>[bii_tmstp_match begin='timestamp begin' end='timestamp end']</strong></td>
+		<td>Affiche contenu lorsque le timestamp actuel est compris entre begin et end. Si begin n'est pas défini alors begin = 0 si end n'est pas défini alors end = time + 60000</td>
 	</tr>
 	<?php
 }, 1);
