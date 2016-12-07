@@ -2,13 +2,13 @@
 /*
   Plugin Name: Bii_wc
   Description: Gestion d'un système de compte unique à plusieurs wordpress
-  Version: 0.2
+  Version: 0.4
   Author: Biilink Agency
   Author URI: http://biilink.com/
   License: GPL2
  */
 
-define('bii_wc_version', '0.2');
+define('bii_wc_version', '0.4');
 define('bii_wc_path', plugin_dir_path(__FILE__));
 define('bii_wc_url', plugin_dir_url(__FILE__));
 
@@ -89,14 +89,14 @@ function bii_wc_SC_gallery_3img($args = [], $content = "") {
 }
 
 function bii_wc_informations() {
-	if (class_exists("WooCommerce")) {	
-	?>
-	<tbody id="bii_wc">
-		<tr><th colspan="2">Bii_woocommerce</th>
-		<tr><td>Les options supplémentaires pour woocommerce sont </td><td><?= bii_makebutton("bii_add_wc_options", 1, 1); ?></td></tr>
-	</tbody>
-	<?php
-}
+	if (class_exists("WooCommerce")) {
+		?>
+		<tbody id="bii_wc">
+			<tr><th colspan="2">Bii_woocommerce</th>
+			<tr><td>Les options supplémentaires pour woocommerce sont </td><td><?= bii_makebutton("bii_add_wc_options", 1, 1); ?></td></tr>
+		</tbody>
+		<?php
+	}
 }
 
 add_action("bii_informations", "bii_wc_informations");
@@ -167,12 +167,54 @@ function bii_WC_dashboard() {
 add_filter('manage_product_posts_columns', 'bii_WC_column_post', 12, 1);
 add_filter('woocommerce_get_cart_url', 'bii_WC_Carturl', 12, 1);
 
+function bii_wc_SC_button_see($args = [], $content = "Voir le produit") {
+	$id = get_the_ID();
+	if (isset($args["id"])) {
+		$id = $args["id"];
+	}
+//	$post = get_post($id);
+	$link = get_post_permalink($id);
+	$urlmarket = bii_instance::get_market()->url();
+	$link = str_replace(get_bloginfo("url"), $urlmarket, $link);
+	$ret = '<a href="' . $link . '"'
+		. ' rel="nofollow"'
+		. ' data-product_id="' . $id . '"'
+		. ' data-product_sku=""'
+		. ' class="eg-jason-element-1719 eg-post-' . $id . ' button add_to_cart_button product_type_variable"'
+		. ' style="display: none;">' . $content . '</a>';
+	return $ret;
+}
+
+function bii_WC_wc_add_to_cart_params($array) {
+//	pre($array);
+	return $array;
+}
+
+function bii_WC_woocommerce_loop_add_to_cart_link($value, $product) {
+//	pre($product);
+	$array = array();
+    preg_match( '/data-product_id="([^"]*)"/i', $value, $array ) ;
+//    pre( $array[1] ) ;
+
+	$id = $array[1];
+	$product = get_product($id);
+	$link = get_post_permalink($id);
+	$urlmarket = bii_instance::get_market()->url();
+	$link = str_replace(get_bloginfo("url"), $urlmarket, $link);
+	$value = sprintf('<a href="%s" title="Continuer vos achats" target="_blank" rel="nofollow" data-product_id="%s" data-product_sku="%s" class="button %s product_type_%s"><i class="fa fa-shopping-bag" style="font-family: fontawesome !important;" aria-hidden="true"></i> %s</a>', esc_url($link), esc_attr($product->id), "",  '', esc_attr($product->product_type), "");
+
+	return $value;
+}
+
 if (get_option("bii_add_wc_options") && get_option("bii_useclasses")) {
 	add_shortcode("bii-mini-gallery-3", "bii_wc_SC_gallery_3img");
+	add_shortcode("bii-wc-eg_linkbutton", "bii_wc_SC_button_see");
 	add_action('bii_plugin_test_zone', 'bii_WC_testZone');
 	add_action('save_post', 'bii_wc_savepost');
 	add_filter('post_link', 'bii_WC_product_link', 10, 2);
 	add_filter('ma/product/get/title', 'bii_WC_maproduct_link', 10, 2);
 
+	add_filter("woocommerce_loop_add_to_cart_link", "bii_WC_woocommerce_loop_add_to_cart_link");
+	add_filter("wc_add_to_cart_params", "bii_WC_wc_add_to_cart_params");
 	add_action("bii_dashboard_content", "bii_WC_dashboard");
 }
