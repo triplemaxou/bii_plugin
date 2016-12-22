@@ -2,13 +2,13 @@
 /*
   Plugin Name: Bii_shared_items
   Description: Gestion d'un système de compte unique à plusieurs wordpress
-  Version: 0.7
+  Version: 0.8
   Author: Biilink Agency
   Author URI: http://biilink.com/
   License: GPL2
  */
 
-define('bii_shared_items_version', '0.7');
+define('bii_shared_items_version', '0.8');
 define('bii_shared_items_path', plugin_dir_path(__FILE__));
 define('bii_shared_items_url', plugin_dir_url(__FILE__));
 
@@ -418,9 +418,9 @@ if (get_option("bii_use_shared_items") && get_option("bii_useclasses")) {
 	  add_action("save_post", "bii_shared_items_save_post");
 	  add_action("delete_post", "bii_shared_items_delete_post");
 	 */
-	add_action("user_register", "bii_shared_items_add_user");
+//	add_action("user_register", "bii_shared_items_add_user");
 
 //	  add_action("delete_user", "bii_shared_items_remove_user");
-	add_action('profile_update', 'bii_shared_items_update_user', 10, 2);
+//	add_action('profile_update', 'bii_shared_items_update_user', 10, 2);
 //	  add_action('updated_user_meta', 'bii_shared_items_update_user_meta', 10, 4);
 }
