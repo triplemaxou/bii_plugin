@@ -1,0 +1,7 @@
+RewriteEngine On
+#RewriteRule ^(.+\.xls)$        excelparsecsv.php?file=$1 [QSA,L]
+RewriteRule ^(.+\.csv)$        excelparsecsv.php?file=$1 [QSA,L]
+<FilesMatch "\.(mov|mp3|jpg|pdf|mp4|avi|wmv|xls)$">
+   ForceType application/octet-stream
+   Header set Content-Disposition attachment
+</FilesMatch>
