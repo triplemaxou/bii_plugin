@@ -117,16 +117,74 @@ function bii_dashboard() {
 	include('admin/bii_dashboard.php');
 }
 
+//Import d'un csv afin de relier des tags aux différents fichiers enregistrer grace au plugin Real Media Library
+function bii_import_csv_tag() {
+    
+    if (isset($_REQUEST['importCsvTag']) && isset($_FILES) && isset($_FILES['csv']) && $_FILES['csv']['error'] == UPLOAD_ERR_OK) {
+        if (($handle = fopen($_FILES['csv']['tmp_name'], "r")) !== FALSE) {
+            
+            //select folder id (we can't find it with the file)
+            $idFolder = 24;
+            $fileIDs = RML_Folder::sFetchFileIds($idFolder);
+            $files = get_posts(array( 'post__in' => $fileIDs , 'post_type' => 'attachment', 'numberposts' => -1));
+            
+            $i=0;
+            while (($data = fgetcsv($handle, 500)) !== FALSE) {
+                
+                $cleFichier = substr($data[0],0,14);
+                
+                foreach ($files as $key => $fileData) {
+                    
+                    if ($cleFichier == substr($fileData->post_title,0,14)) {
+                        echo "<br />&nbsp;&nbsp;".$cleFichier." - ".$fileData->ID;
+                        
+                        $terms = array();
+                        for($j = 1 ; $j < count($data) ; $j++) {
+                            if (strlen($data[$j]) > 0) {
+                                $term = wp_insert_term($data[$j], 'mediatag', array('slug' => stripAccentsLiens($data[$j])));
+                                
+                                if (is_array($term) && isset($term['term_id'])) {
+                                    $terms[] = $term['term_id'];
+                                }  elseif (is_object($term) && isset($term->error_data) && isset($term->error_data['term_exists'])) {
+                                    $terms[] = $term->error_data['term_exists'];
+                                }
+                            }
+                            
+                        }
+                        
+                        $term_taxonomy_ids = wp_set_object_terms($fileData->ID, $terms, 'mediatag');
+                        if (is_wp_error($term_taxonomy_ids)) {
+                            pre($term_taxonomy_ids);
+                        } else {
+                            echo " insert taxonomy ok";
+                        }
+                        unset($files[$key]);
+                    }
+                }
+                $i++;
+            }
+            fclose($handle);
+        }
+    }
+    
+}
+add_action("bii_import_csv_tag", 'bii_import_csv_tag');
+
 function bii_dashboard_content() {
+    do_action("bii_import_csv_tag");
 	?>
 	<div class="bii-tools">
 		<h2>Outils <button class="btn btn-default bii-make-this-visible" data-selector=".bii-tools-inner"><i class="fa fa-plus"></i></button></h2>
-		<div class="bii-tools-inner bii-invisible" >
+		<div class="bii-tools-inner " >
 			<?php if (get_option("bii_useclasses")) { ?>
 				<a class="btn btn-info bii_action_ajax" data-action="bii_delete_not_approved" data-success="log" href="#"><span class="fa-stack fa-lg">
 						<i class="fa fa-comment-o fa-stack-1x"></i>
 						<i class="fa fa-ban fa-stack-2x text-danger"></i>
 					</span> Supprimmer les commentaires non approuvés</a>
+            <form method='post' enctype="multipart/form-data" action="<?php echo esc_url(get_admin_url(null, 'admin.php?page=bii_plugin')) ?>">
+                <input type='file' name='csv' />
+                <input class='btn btn-success' type='submit' name='importCsvTag' />
+            </form>
 			<?php } ?>
 			<?php do_action("bii_tools"); ?>
 		</div>

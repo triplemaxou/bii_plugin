@@ -582,50 +582,6 @@ function bii_SC_displayindate($attrs = [],$content=''){
 	return $contents;
 }
 
-function bii_SC_getFilesOfFolder($atts) {
-    
-    $atts = shortcode_atts(
-        array(
-            'folder' => false
-        ), $atts, 'filesOfFolder' );
-    
-    //check if folder id is an integer
-    if (intval($atts['folder'])) {
-        
-        $structure = RML_Structure::newInstance();
-        $folder = $structure->getFolderByID($atts['folder']);
-        //check if folder exist
-        if (wp_rml_get_by_id($atts['folder'])) {
-            
-            //get files id into the folder
-            $fileIDs = RML_Folder::sFetchFileIds($atts['folder']);
-            if (count($fileIDs) > 0) {
-                
-                $files = get_posts(array( 'post__in' => $fileIDs , 'post_type' => 'attachment', 'numberposts' => -1));
-                $nbrFiles = count($files);
-                $i = 0;
-                
-                $contents = "<div class='row'>";
-                foreach ($files as $file) {
-                    $i++;
-                    if ($i % 6 == 0) {
-                        $contents .= "</div><div class='row'>";
-                    }
-                    
-                    $contents .= "<div class='col-md-2'>";
-                    $contents .= "<a href='".$file->guid."' >".$file->post_title." - ".$file->post_mime_type."</a>"; 
-                    $contents .= "</div>";
-                }
-                $contents .= "<div/>";
-                return $contents;
-                
-            }
-            return "<p>Aucun fichier<p/>";
-        }
-    }
-    return "<p>Dossier inexistant</p>";
-}
-add_shortcode("filesOfFolder", "bii_SC_getFilesOfFolder");
 add_shortcode('bii_displaywhenrequest', 'bii_SC_displaywhenrequest');
 add_shortcode('bii_notdisplaywhenrequest', 'bii_SC_notdisplaywhenrequest');
 add_shortcode('bii_loremipsum', 'bii_loremipsum');
@@ -672,5 +628,65 @@ add_action("bii_base_shortcodes", function() {
 		<td><strong>[bii_tmstp_match begin='timestamp begin' end='timestamp end']</strong></td>
 		<td>Affiche contenu lorsque le timestamp actuel est compris entre begin et end. Si begin n'est pas défini alors begin = 0 si end n'est pas défini alors end = time + 60000</td>
 	</tr>
+    <tr>
+		<td><strong>[filesOfFolder folder=## ]</strong></td>
+		<td>Affiche l'ensemble des fichiers du dossier sélectionné</td>
+	</tr>
 	<?php
 }, 1);
+
+
+// get all files in a media folder : use with Real Media Library plugin
+function bii_SC_getFilesOfFolder($atts) {
+    
+    $extToType = array(
+        'application/pdf' => 'file-pdf',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document' => 'file-docx',
+        'application/msword' => 'file-doc',
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' => 'file-xlsx',
+        'image/gif' => 'file-gif',
+        'image/png' => 'file-png',
+        'image/jpeg' => 'file-jpeg'
+        );
+    
+    $atts = shortcode_atts(
+        array(
+            'folder' => false
+        ), $atts, 'filesOfFolder' );
+    
+    //check if folder id is an integer
+    if (intval($atts['folder'])) {
+        
+        //check if folder exist
+        if (wp_rml_get_by_id($atts['folder'])) {
+            
+            //get files id into the folder
+            $fileIDs = RML_Folder::sFetchFileIds($atts['folder']);
+            if (count($fileIDs) > 0) {
+                
+                $files = get_posts(array( 'post__in' => $fileIDs , 'post_type' => 'attachment', 'numberposts' => -1));
+                $nbrFiles = count($files);
+                $i = 0;
+                
+                $contents = "<div class='container-fluid'><div class='row'>";
+                foreach ($files as $file) {
+                    if ($i % 6 == 0) {
+                        $contents .= "</div><div class='row'>";
+                    }
+                    
+                    $contents .= "<div class='col-md-2'>";
+                    $contents .= "<a href='".$file->guid."' class='".$extToType[$file->post_mime_type]."' >".$file->post_title."</a>"; 
+                    $contents .= "</div>";
+                    $i++;
+                }
+                $contents .= "</div></div>";
+                
+                return $contents;
+                
+            }
+            return "<p>Aucun fichier<p/>";
+        }
+    }
+    return "<p>Dossier inexistant</p>";
+}
+add_shortcode("filesOfFolder", "bii_SC_getFilesOfFolder");
